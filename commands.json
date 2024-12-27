@@ -1,0 +1,8 @@
+{
+    "commands": {
+        "attack": 0,
+        "ability": 1,
+        "save": 2,
+        "load": 3
+    }
+}

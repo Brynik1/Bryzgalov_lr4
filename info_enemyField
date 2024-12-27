@@ -1,0 +1,44 @@
+Info about the GameField:
+width: 10
+height: 10
+Ships:
+                    
+                    
+                    
+                    
+            1       
+            1       
+            1       
+      1 1           
+                    
+                    
+
+Info about the Ships:
+
+New ship
+Coordinates (x y): 6 4
+Vertical
+Length: 3
+Whole
+Whole
+Whole
+
+New ship
+Coordinates (x y): 3 7
+Horizontal
+Length: 2
+Whole
+Whole
+
+Sizes: 3 2
+Statuses:
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 2 0 0 0 
+0 0 0 0 0 0 2 0 0 0 
+0 0 0 0 0 0 2 0 0 0 
+0 0 0 2 2 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 

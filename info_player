@@ -1,0 +1,45 @@
+Info about the GameField:
+10 10
+Info about the Ships:
+New ship
+0 0 Vertical
+2 Destroyed Damaged 
+New ship
+2 0 Horizontal
+2 Whole Damaged 
+New ship
+8 0 Vertical
+3 Destroyed Whole Damaged 
+New ship
+2 2 Horizontal
+2 Damaged Whole 
+New ship
+0 4 Vertical
+3 Whole Whole Whole 
+New ship
+2 4 Vertical
+1 Damaged 
+New ship
+4 5 Vertical
+1 Damaged 
+New ship
+8 6 Vertical
+1 Whole 
+New ship
+9 8 Vertical
+1 Whole 
+New ship
+2 9 Horizontal
+4 Damaged Whole Damaged Damaged 
+Sizes: 2 2 3 2 3 1 1 1 1 4
+Statuses:
+2 1 2 2 1 0 1 0 2 1 
+2 0 1 0 0 0 0 1 2 0 
+1 0 2 2 0 0 1 0 2 1 
+0 0 0 0 1 1 1 0 0 1 
+2 1 2 1 1 1 0 1 1 0 
+2 1 1 0 2 1 1 1 1 1 
+2 0 0 0 1 1 0 1 2 0 
+1 1 1 1 1 0 1 0 1 1 
+1 0 1 0 1 1 1 0 0 2 
+1 1 2 2 2 2 1 0 1 1 
