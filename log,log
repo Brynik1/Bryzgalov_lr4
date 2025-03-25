@@ -1,0 +1,282 @@
+Брызгалов Никита 3383
+
+
+nikita@nikita:~$ date
+Пн 24 мар 2025 20:40:22 MSK
+nikita@nikita:~$ who
+nikita   seat0        2025-03-23 21:41 (login screen)
+nikita   tty2         2025-03-23 21:41 (tty2)
+nikita@nikita:~$ tty
+/dev/pts/0
+nikita@nikita:~$ uname
+Linux
+nikita@nikita:~$ logname
+nikita
+nikita@nikita:~$ lscpu
+Архитектура:               x86_64
+  CPU op-mode(s):          32-bit, 64-bit
+  Address sizes:           45 bits physical, 48 bits virtual
+  Порядок байт:            Little Endian
+CPU(s):                    4
+  On-line CPU(s) list:     0-3
+ID прроизводителя:         AuthenticAMD
+  Имя модели:              AMD Ryzen 7 5700U with Radeon Graphics
+    Семейство ЦПУ:         23
+    Модель:                104
+    Потоков на ядро:       1
+    Ядер на сокет:         1
+    Сокетов:               4
+    Степпинг:              1
+    BogoMIPS:              3593,13
+    Флаги:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge 
+                           mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall 
+                           nx mmxext pdpe1gb rdtscp lm constant_tsc rep_good nop
+                           l xtopology tsc_reliable nonstop_tsc cpuid extd_apici
+                           d tsc_known_freq pni pclmulqdq ssse3 fma cx16 sse4_1 
+                           sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand 
+                           hypervisor lahf_lm cr8_legacy abm sse4a misalignsse 3
+                           dnowprefetch osvw topoext ssbd ibpb vmmcall fsgsbase 
+                           bmi1 avx2 smep bmi2 rdseed adx smap clflushopt clwb s
+                           ha_ni xsaveopt xsavec xgetbv1 clzero arat umip rdpid 
+                           overflow_recov succor
+Virtualization features:   
+  Разработчик гипервизора: VMware
+  Тип виртуализации:       полный
+Caches (sum of all):       
+  L1d:                     128 KiB (4 instances)
+  L1i:                     128 KiB (4 instances)
+  L2:                      2 MiB (4 instances)
+  L3:                      16 MiB (4 instances)
+NUMA:                      
+  NUMA node(s):            1
+  NUMA node0 CPU(s):       0-3
+Vulnerabilities:           
+  Gather data sampling:    Not affected
+  Itlb multihit:           Not affected
+  L1tf:                    Not affected
+  Mds:                     Not affected
+  Meltdown:                Not affected
+  Mmio stale data:         Not affected
+  Reg file data sampling:  Not affected
+  Retbleed:                Mitigation; untrained return thunk; SMT disabled
+  Spec rstack overflow:    Vulnerable: Safe RET, no microcode
+  Spec store bypass:       Mitigation; Speculative Store Bypass disabled via prc
+                           tl
+  Spectre v1:              Mitigation; usercopy/swapgs barriers and __user point
+                           er sanitization
+  Spectre v2:              Mitigation; Retpolines; IBPB conditional; STIBP disab
+                           led; RSB filling; PBRSB-eIBRS Not affected; BHI Not a
+                           ffected
+  Srbds:                   Not affected
+  Tsx async abort:         Not affected
+nikita@nikita:~$ cd lb1
+
+
+
+# Task 1
+nikita@nikita:~/lb1$ sudo ls -lR / 2>/dev/null > all_files.txt
+[sudo] пароль для nikita: 
+nikita@nikita:~/lb1$ grep '^-' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ grep '^b' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ grep '^c' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ grep '^d' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ grep '^l' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ grep '^p' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ grep '^s' all_files.txt | head -n 1 >> output.txt
+nikita@nikita:~/lb1$ rm all_files.txt 
+nikita@nikita:~/lb1$ cat output.txt 
+-rw-------   1 root root 3697278976 мар 23 16:43 swap.img
+brw-rw----   1 root   disk      2,   0 мар 23 21:40 fd0
+crw-r--r--   1 root   root     10, 235 мар 23 21:40 autofs
+drwxr-xr-x   2 root root       4096 фев 26  2024 bin.usr-is-merged
+lrwxrwxrwx   1 root root          7 апр 22  2024 bin -> usr/bin
+prw-------  1 root              root      0 мар 23 21:40 initctl
+srw-rw-rw-  1 root              root      0 мар 23 21:40 snapd-snap.socket
+-rw-------   1 root root         12 мар 24 01:22 secret.txt
+brw-rw----   1 root   disk      2,   0 мар 23 21:40 fd0
+crw-r--r--   1 root   root     10, 235 мар 23 21:40 autofs
+drwxr-xr-x   2 root root       4096 фев 26  2024 bin.usr-is-merged
+lrwxrwxrwx   1 root root          7 апр 22  2024 bin -> usr/bin
+prw-rw-r-- 1 nikita nikita      0 мар 24 00:59 my_fifo
+srw-rw-rw-  1 root              root      0 мар 23 21:40 snapd-snap.socket
+
+# Script for task 1
+nikita@nikita:~/lb1$ vim task1.sh 
+nikita@nikita:~/lb1$ bash task1.sh new_output.txt
+nikita@nikita:~/lb1$ cat new_output.txt 
+-rw-------   1 root root         12 мар 24 01:22 secret.txt
+brw-rw----   1 root   disk      2,   0 мар 23 21:40 fd0
+crw-r--r--   1 root   root     10, 235 мар 23 21:40 autofs
+drwxr-xr-x   2 root root       4096 фев 26  2024 bin.usr-is-merged
+lrwxrwxrwx   1 root root          7 апр 22  2024 bin -> usr/bin
+prw-rw-r-- 1 nikita nikita    0 мар 24 00:59 my_fifo
+srw-rw-rw-  1 root              root      0 мар 23 21:40 snapd-snap.socket
+
+
+# Task 2
+nikita@nikita:~/lb1$ echo "test" > target_file.txt
+nikita@nikita:~/lb1$ ln target_file.txt link1.txt
+nikita@nikita:~/lb1$ ln target_file.txt ~/link2.txt
+nikita@nikita:~/lb1$ ls -i target_file.txt 
+525312 target_file.txt
+nikita@nikita:~/lb1$ ls -iR / 2>/dev/null | awk -v inode="525312" '$1 == inode {print $0}'
+525312 link2.txt
+525312 link1.txt
+525312 target_file.txt
+
+# Script for task 2
+nikita@nikita:~/lb1$ vim task2.sh
+nikita@nikita:~/lb1$ bash task2.sh target_file.txt 
+Найдены следующие жесткие ссылки для файла: target_file.txt (inode: 525312):
+525312 link2.txt
+525312 link1.txt
+525312 target_file.txt
+
+
+# Task 3
+nikita@nikita:~/lb1$ echo "test" > target.txt
+nikita@nikita:~/lb1$ ln -s target.txt link_ln.txt
+nikita@nikita:~/lb1$ cp -s target.txt link_cp.txt
+nikita@nikita:~/lb1$ python3 -c "import os; os.symlink('target.txt', 'link_python.txt')"
+
+# Script for task 3
+nikita@nikita:~/lb1$ vim task3.sh
+nikita@nikita:~/lb1$ bash task3.sh target.txt 
+Символьные ссылки на target.txt:
+link_cp.txt
+link_ln.txt
+link_python.txt
+
+
+# Task 4
+nikita@nikita:~/lb1$ echo "test" > new_target.txt
+nikita@nikita:~/lb1$ ln -s new_target.txt new_link1.txt
+nikita@nikita:~/lb1$ ln -s new_target.txt ~/new_link2.txt
+nikita@nikita:~/lb1$ ls -lR ~ 2>/dev/null | grep " -> new_target.txt$"
+lrwxrwxrwx 1 nikita nikita   14 мар 24 21:58 new_link2.txt -> new_target.txt
+lrwxrwxrwx 1 nikita nikita   14 мар 24 21:56 new_link1.txt -> new_target.txt
+
+# Script for task 4
+nikita@nikita:~/lb1$ vim task4.sh
+nikita@nikita:~/lb1$ bash task4.sh new_target.txt 
+Поиск символьных ссылок, указывающих на 'new_target.txt':
+new_link2.txt -> new_target.txt
+new_link1.txt -> new_target.txt
+
+
+# Task 5
+nikita@nikita:~/lb1$ ls -l
+итого 84
+drwxrwxr-x 2 nikita nikita 4096 мар 24 01:03 experiment_dir
+-rwxr-xr-x 1 nikita nikita    5 мар 24 01:04 file.txt
+-rwsr-xr-x 1 root   root     29 мар 24 01:23 gateway.sh
+-rw-rw-r-- 3 nikita nikita    5 мар 24 21:03 link1.txt
+lrwxrwxrwx 1 nikita nikita   10 мар 24 21:43 link_cp.txt -> target.txt
+-rw-rw-r-- 2 nikita nikita    5 мар 24 21:42 link_link.txt
+lrwxrwxrwx 1 nikita nikita   10 мар 24 21:43 link_ln.txt -> target.txt
+lrwxrwxrwx 1 nikita nikita   10 мар 24 21:43 link_python.txt -> target.txt
+prw-rw-r-- 1 nikita nikita    0 мар 24 22:10 my_fifo
+lrwxrwxrwx 1 nikita nikita   14 мар 24 21:56 new_link1.txt -> new_target.txt
+-rw-rw-r-- 1 nikita nikita  455 мар 24 20:54 new_output.txt
+-rw-rw-r-- 1 nikita nikita    5 мар 24 21:56 new_target.txt
+-rw-rw-r-- 1 nikita nikita  922 мар 24 20:50 output.txt
+-rwxrwxr-x 1 nikita nikita   32 мар 24 01:17 script.sh
+-rw-rw-r-- 3 nikita nikita    5 мар 24 21:03 target_file.txt
+-rw-rw-r-- 2 nikita nikita    5 мар 24 21:42 target.txt
+-rw-rw-r-- 1 nikita nikita  391 мар 24 21:36 task1.sh
+-rw-rw-r-- 1 nikita nikita  512 мар 24 21:38 task2.sh
+-rw-rw-r-- 1 nikita nikita  261 мар 24 21:49 task3.sh
+-rw-rw-r-- 1 nikita nikita  310 мар 24 22:04 task4.sh
+-rw-rw-r-- 1 nikita nikita  427 мар 24 00:59 task5.sh
+-rw-rw-r-- 1 nikita nikita  467 мар 24 01:01 task6.sh
+-rw-rw-r-- 1 nikita nikita  437 мар 24 01:03 task7.sh
+drwxrwxr-x 4 nikita nikita 4096 мар 24 20:46 task9
+drwxrwxr-x 2 nikita nikita 4096 мар 24 22:21 test_dir
+-rwxr----- 1 nikita nikita    5 мар 24 01:19 test_file.txt
+nikita@nikita:~/lb1$ mkfifo my_fifo
+nikita@nikita:~/lb1$ find ~ 2>/dev/null -type p | head -n 3
+/home/nikita/lb1/my_fifo
+nikita@nikita:~/lb1$ find ~ 2>/dev/null -name "*.txt" | head -n 3
+/home/nikita/link2.txt
+/home/nikita/.cache/tracker3/files/last-crawl.txt
+/home/nikita/.cache/tracker3/files/first-index.txt
+nikita@nikita:~/lb1$ find ~ -type l -exec ls -l {} \; 2>/dev/null | head -n 3
+lrwxrwxrwx 1 nikita nikita 14 мар 24 21:56 /home/nikita/lb1/new_link1.txt -> new_target.txt
+lrwxrwxrwx 1 nikita nikita 10 мар 24 21:43 /home/nikita/lb1/link_ln.txt -> target.txt
+lrwxrwxrwx 1 nikita nikita 10 мар 24 21:43 /home/nikita/lb1/link_cp.txt -> target.txt
+
+# Simple detailed information for task 5
+nikita@nikita:~/lb1$ find ~ -type f -ls 2>/dev/null | head -n 3
+   525112      4 -rw-r--r--   1 nikita   nikita        220 мар 31  2024 /home/nikita/.bash_logout
+   525467      4 -rw-rw-r--   1 nikita   nikita        376 мар 23 21:41 /home/nikita/.config/ibus/bus/6319637d561140278b1a331ef785923d-unix-wayland-0
+   525468      4 -rw-rw-r--   1 nikita   nikita        376 мар 23 21:41 /home/nikita/.config/ibus/bus/6319637d561140278b1a331ef785923d-unix-0
+nikita@nikita:~/lb1$ find ~ -type b -ls 2>/dev/null | head -n 3
+nikita@nikita:~/lb1$ find ~ -type c -ls 2>/dev/null | head -n 3
+nikita@nikita:~/lb1$ find ~ -type d -ls 2>/dev/null | head -n 3
+   525111      4 drwxr-x---  16 nikita   nikita       4096 мар 24 22:04 /home/nikita
+   525406      4 drwx------  13 nikita   nikita       4096 мар 24 00:02 /home/nikita/.config
+   525417      4 drwx------   3 nikita   nikita       4096 мар 23 16:52 /home/nikita/.config/ibus
+nikita@nikita:~/lb1$ find ~ -type l -ls 2>/dev/null | head -n 3
+   525957      0 lrwxrwxrwx   1 nikita   nikita         14 мар 24 21:56 /home/nikita/lb1/new_link1.txt -> new_target.txt
+   525302      0 lrwxrwxrwx   1 nikita   nikita         10 мар 24 21:43 /home/nikita/lb1/link_ln.txt -> target.txt
+   525367      0 lrwxrwxrwx   1 nikita   nikita         10 мар 24 21:43 /home/nikita/lb1/link_cp.txt -> target.txt
+nikita@nikita:~/lb1$ find ~ -type p -ls 2>/dev/null | head -n 3
+   525963      0 prw-rw-r--   1 nikita   nikita          0 мар 24 22:10 /home/nikita/lb1/my_fifo
+nikita@nikita:~/lb1$ find ~ -type s -ls 2>/dev/null | head -n 3
+   525466      0 srwxrwxr-x   1 nikita   nikita          0 мар 23 16:52 /home/nikita/.cache/ibus/dbus-MMyv4CvX
+   525527      0 srwxrwxr-x   1 nikita   nikita          0 мар 23 21:41 /home/nikita/.cache/ibus/dbus-JRAmslJI
+
+
+# Task 6
+# .txt
+nikita@nikita:~/lb1$ echo "Hello, World!" > textfile.txt
+nikita@nikita:~/lb1$ od -c textfile.txt
+0000000   H   e   l   l   o   ,       W   o   r   l   d   !  \n
+0000016
+nikita@nikita:~/lb1$ od -t x1 textfile.txt
+0000000 48 65 6c 6c 6f 2c 20 57 6f 72 6c 64 21 0a
+0000016
+nikita@nikita:~/lb1$ od -t o1 textfile.txt
+0000000 110 145 154 154 157 054 040 127 157 162 154 144 041 012
+0000016
+nikita@nikita:~/lb1$ od -i textfile.txt 
+0000000  1819043144  1461726319  1684828783        2593
+0000016
+
+# .png
+nikita@nikita:~/lb1$ wget https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png -O image.png
+--2025-03-25 16:15:43--  https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
+Распознаётся www.google.com (www.google.com)… 142.251.140.4, 2a00:1450:4017:805::2004
+Подключение к www.google.com (www.google.com)|142.251.140.4|:443... соединение установлено.
+HTTP-запрос отправлен. Ожидание ответа… 200 OK
+Длина: 5969 (5,8K) [image/png]
+Сохранение в: ‘image.png’
+image.png                           100%[===================================================================>]   5,83K  --.-KB/s    за 0s      
+2025-03-25 16:15:43 (40,0 MB/s) - ‘image.png’ сохранён [5969/5969]
+nikita@nikita:~/lb1$ hexdump -C -n 32 image.png
+00000000  89 50 4e 47 0d 0a 1a 0a  00 00 00 0d 49 48 44 52  |.PNG........IHDR|
+00000010  00 00 01 10 00 00 00 5c  08 06 00 00 00 a6 e7 ea  |.......\........|
+00000020
+nikita@nikita:~/lb1$ hexdump -n 32 image.png
+0000000 5089 474e 0a0d 0a1a 0000 0d00 4849 5244
+0000010 0000 1001 0000 5c00 0608 0000 a600 eae7
+0000020
+nikita@nikita:~/lb1$ od -t x1 -N 32 image.png
+0000000 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52
+0000020 00 00 01 10 00 00 00 5c 08 06 00 00 00 a6 e7 ea
+0000040
+nikita@nikita:~/lb1$ od -c -N 32 image.png
+0000000 211   P   N   G  \r  \n 032  \n  \0  \0  \0  \r   I   H   D   R
+0000020  \0  \0 001 020  \0  \0  \0   \  \b 006  \0  \0  \0 246 347 352
+0000040
+
+# symlink
+nikita@nikita:~/lb1$ ln -s textfile.txt symlink.txt
+nikita@nikita:~/lb1$ od -c symlink.txt
+0000000   H   e   l   l   o   ,       W   o   r   l   d   !  \n
+0000016
+nikita@nikita:~/lb1$ ls -l symlink.txt
+lrwxrwxrwx 1 nikita nikita 12 мар 25 16:18 symlink.txt -> textfile.txt
+
+
+# Task 7
