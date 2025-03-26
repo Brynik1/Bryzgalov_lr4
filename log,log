@@ -280,3 +280,258 @@ lrwxrwxrwx 1 nikita nikita 12 мар 25 16:18 symlink.txt -> textfile.txt
 
 
 # Task 7
+nikita@nikita:~/lb1$ df -h
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+tmpfs            790M         2,2M  788M            1% /run
+/dev/sda2         20G          11G  8,3G           56% /
+tmpfs            3,9G            0  3,9G            0% /dev/shm
+tmpfs            5,0M         8,0K  5,0M            1% /run/lock
+tmpfs            790M         144K  790M            1% /run/user/1000
+/dev/sr1         6,0G         6,0G     0          100% /media/nikita/Ubuntu 24.04.2 LTS amd64
+/dev/sr0          90M          90M     0          100% /media/nikita/CDROM
+
+# Script for task 7
+nikita@nikita:~/lb1$ vim task7.sh
+nikita@nikita:~/lb1$ bash task7.sh 
+Начальное состояние:
+==================================================
+Текущий размер каталога test_directory:
+4,0K	test_directory
+Использование inodes:
+Файл.система    Iнодов IИспользовано IСвободно IИспользовано% Cмонтировано в
+/dev/sda2      1310720        190428   1120292            15% /
+Использование дискового пространства:
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+/dev/sda2         20G          11G  8,3G           56% /
+==================================================
+Создаем 5 файлов по 1MB...
+Состояние после создания файлов:
+==================================================
+Текущий размер каталога test_directory:
+5,1M	test_directory
+Использование inodes:
+Файл.система    Iнодов IИспользовано IСвободно IИспользовано% Cмонтировано в
+/dev/sda2      1310720        190433   1120287            15% /
+Использование дискового пространства:
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+/dev/sda2         20G          11G  8,2G           56% /
+==================================================
+Создаем 3 подкаталога с файлами...
+Состояние после создания подкаталогов:
+==================================================
+Текущий размер каталога test_directory:
+6,5M	test_directory
+Использование inodes:
+Файл.система    Iнодов IИспользовано IСвободно IИспользовано% Cмонтировано в
+/dev/sda2      1310720        190439   1120281            15% /
+Использование дискового пространства:
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+/dev/sda2         20G          11G  8,2G           56% /
+==================================================
+Удаляем 3 файла...
+Состояние после удаления файлов:
+==================================================
+Текущий размер каталога test_directory:
+3,5M	test_directory
+Использование inodes:
+Файл.система    Iнодов IИспользовано IСвободно IИспользовано% Cмонтировано в
+/dev/sda2      1310720        190436   1120284            15% /
+Использование дискового пространства:
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+/dev/sda2         20G          11G  8,3G           56% /
+==================================================
+Удаляем 2 подкаталога...
+Состояние после удаления подкаталогов:
+==================================================
+Текущий размер каталога test_directory:
+2,5M	test_directory
+Использование inodes:
+Файл.система    Iнодов IИспользовано IСвободно IИспользовано% Cмонтировано в
+/dev/sda2      1310720        190432   1120288            15% /
+Использование дискового пространства:
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+/dev/sda2         20G          11G  8,3G           56% /
+==================================================
+Полная очистка тестового каталога...
+Финальное состояние:
+==================================================
+Текущий размер каталога test_directory:
+Каталог test_directory не существует
+Использование inodes:
+Файл.система    Iнодов IИспользовано IСвободно IИспользовано% Cмонтировано в
+/dev/sda2      1310720        190427   1120293            15% /
+Использование дискового пространства:
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+/dev/sda2         20G          11G  8,3G           56% /
+==================================================
+
+
+# Task 8
+nikita@nikita:~/lb1$ ls -l /etc/passwd
+-rw-r--r-- 1 root root 2925 мар 24 01:58 /etc/passwd
+nikita@nikita:~/lb1$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+_apt:x:42:65534::/nonexistent:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:998:998:systemd Network Management:/:/usr/sbin/nologin
+systemd-timesync:x:996:996:systemd Time Synchronization:/:/usr/sbin/nologin
+dhcpcd:x:100:65534:DHCP Client Daemon,,,:/usr/lib/dhcpcd:/bin/false
+messagebus:x:101:101::/nonexistent:/usr/sbin/nologin
+syslog:x:102:102::/nonexistent:/usr/sbin/nologin
+systemd-resolve:x:991:991:systemd Resolver:/:/usr/sbin/nologin
+uuidd:x:103:103::/run/uuidd:/usr/sbin/nologin
+usbmux:x:104:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+tss:x:105:105:TPM software stack,,,:/var/lib/tpm:/bin/false
+systemd-oom:x:990:990:systemd Userspace OOM Killer:/:/usr/sbin/nologin
+kernoops:x:106:65534:Kernel Oops Tracking Daemon,,,:/:/usr/sbin/nologin
+whoopsie:x:107:109::/nonexistent:/bin/false
+dnsmasq:x:999:65534:dnsmasq:/var/lib/misc:/usr/sbin/nologin
+avahi:x:108:111:Avahi mDNS daemon,,,:/run/avahi-daemon:/usr/sbin/nologin
+tcpdump:x:109:112::/nonexistent:/usr/sbin/nologin
+sssd:x:110:113:SSSD system user,,,:/var/lib/sss:/usr/sbin/nologin
+speech-dispatcher:x:111:29:Speech Dispatcher,,,:/run/speech-dispatcher:/bin/false
+cups-pk-helper:x:112:114:user for cups-pk-helper service,,,:/nonexistent:/usr/sbin/nologin
+fwupd-refresh:x:989:989:Firmware update daemon:/var/lib/fwupd:/usr/sbin/nologin
+saned:x:113:116::/var/lib/saned:/usr/sbin/nologin
+geoclue:x:114:117::/var/lib/geoclue:/usr/sbin/nologin
+cups-browsed:x:115:114::/nonexistent:/usr/sbin/nologin
+hplip:x:116:7:HPLIP system user,,,:/run/hplip:/bin/false
+gnome-remote-desktop:x:988:988:GNOME Remote Desktop:/var/lib/gnome-remote-desktop:/usr/sbin/nologin
+polkitd:x:987:987:User for polkitd:/:/usr/sbin/nologin
+rtkit:x:117:119:RealtimeKit,,,:/proc:/usr/sbin/nologin
+colord:x:118:120:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin
+gnome-initial-setup:x:119:65534::/run/gnome-initial-setup/:/bin/false
+gdm:x:120:121:Gnome Display Manager:/var/lib/gdm3:/bin/false
+nm-openvpn:x:121:122:NetworkManager OpenVPN,,,:/var/lib/openvpn/chroot:/usr/sbin/nologin
+nikita:x:1000:1000:nikita:/home/nikita:/bin/bash
+testuser:x:1001:1001:noname,1,1,1,1:/home/testuser:/bin/bash
+
+nikita@nikita:~/lb1$ ls -l /etc/shadow
+-rw-r----- 1 root shadow 1441 мар 24 01:58 /etc/shadow
+nikita@nikita:~/lb1$ cat /etc/shadow | head -n 5
+cat: /etc/shadow: Отказано в доступе
+nikita@nikita:~/lb1$ sudo cat /etc/shadow
+root:*:20134:0:99999:7:::
+daemon:*:20134:0:99999:7:::
+bin:*:20134:0:99999:7:::
+sys:*:20134:0:99999:7:::
+sync:*:20134:0:99999:7:::
+games:*:20134:0:99999:7:::
+man:*:20134:0:99999:7:::
+lp:*:20134:0:99999:7:::
+mail:*:20134:0:99999:7:::
+news:*:20134:0:99999:7:::
+uucp:*:20134:0:99999:7:::
+proxy:*:20134:0:99999:7:::
+www-data:*:20134:0:99999:7:::
+backup:*:20134:0:99999:7:::
+list:*:20134:0:99999:7:::
+irc:*:20134:0:99999:7:::
+_apt:*:20134:0:99999:7:::
+nobody:*:20134:0:99999:7:::
+systemd-network:!*:20134::::::
+systemd-timesync:!*:20134::::::
+dhcpcd:!:20134::::::
+messagebus:!:20134::::::
+syslog:!:20134::::::
+systemd-resolve:!*:20134::::::
+uuidd:!:20134::::::
+usbmux:!:20134::::::
+tss:!:20134::::::
+systemd-oom:!*:20134::::::
+kernoops:!:20134::::::
+whoopsie:!:20134::::::
+dnsmasq:!:20134::::::
+avahi:!:20134::::::
+tcpdump:!:20134::::::
+sssd:!:20134::::::
+speech-dispatcher:!:20134::::::
+cups-pk-helper:!:20134::::::
+fwupd-refresh:!*:20134::::::
+saned:!:20134::::::
+geoclue:!:20134::::::
+cups-browsed:!:20134::::::
+hplip:!:20134::::::
+gnome-remote-desktop:!*:20134::::::
+polkitd:!*:20134::::::
+rtkit:!:20134::::::
+colord:!:20134::::::
+gnome-initial-setup:!:20134::::::
+gdm:!:20134::::::
+nm-openvpn:!:20134::::::
+nikita:$6$0faoFIoZiV0OfINV$D9MrkB1AXWGu2tKh4eP0zx2VsN1nZ3FAAF34AHtq34sYeYqwoqzX.1v7Iy.SWE.v3gNggRYjjLCkjRmuEBSeV1:20170:0:99999:7:::
+testuser:$y$j9T$1ON.NEdWC28yDAh/safQH.$4bgWFJh7HYRr80pNyAyFZELqjn8ridgTn0kvMhj4sz3:20170:0:99999:7:::
+
+nikita@nikita:~/lb1$ ls -l /usr/bin/passwd
+-rwsr-xr-x 1 root root 64152 мая 30  2024 /usr/bin/passwd
+nikita@nikita:~/lb1$ file /usr/bin/passwd
+/usr/bin/passwd: setuid ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=2344480b478a675609210ed886207d6cbdc8cdd7, for GNU/Linux 3.2.0, stripped
+
+
+# Task 9
+# 9.1
+nikita@nikita:~/lb1$ mkdir test_dir
+nikita@nikita:~/lb1$ cd test_dir/
+nikita@nikita:~/lb1/test_dir$ touch file1.txt file2.txt file3.txt
+nikita@nikita:~/lb1/test_dir$ mkdir subdir
+nikita@nikita:~/lb1/test_dir$ ls -l
+итого 4
+-rw-rw-r-- 1 nikita nikita    0 мар 25 17:40 file1.txt
+-rw-rw-r-- 1 nikita nikita    0 мар 25 17:40 file2.txt
+-rw-rw-r-- 1 nikita nikita    0 мар 25 17:40 file3.txt
+drwxrwxr-x 2 nikita nikita 4096 мар 25 17:40 subdir
+nikita@nikita:~/lb1/test_dir$ chmod u=rw,g=r,o= file1.txt
+nikita@nikita:~/lb1/test_dir$ chmod a+x file2.txt
+nikita@nikita:~/lb1/test_dir$ chmod o-r file3.txt 
+nikita@nikita:~/lb1/test_dir$ chmod 750 subdir
+nikita@nikita:~/lb1/test_dir$ ls -l
+итого 4
+-rw-r----- 1 nikita nikita    0 мар 25 17:40 file1.txt
+-rwxrwxr-x 1 nikita nikita    0 мар 25 17:40 file2.txt
+-rw-rw---- 1 nikita nikita    0 мар 25 17:40 file3.txt
+drwxr-x--- 2 nikita nikita 4096 мар 25 17:40 subdir
+nikita@nikita:~/lb1/test_dir$ sudo chown root file1.txt
+nikita@nikita:~/lb1/test_dir$ sudo chown root:root subdir 
+nikita@nikita:~/lb1/test_dir$ ls -l
+итого 4
+-rw-r----- 1 root   nikita    0 мар 25 17:40 file1.txt
+-rwxrwxr-x 1 nikita nikita    0 мар 25 17:40 file2.txt
+-rw-rw---- 1 nikita nikita    0 мар 25 17:40 file3.txt
+drwxr-x--- 2 root   root   4096 мар 25 17:40 subdir
+
+# 9.2
+nikita@nikita:~/lb1/test_dir$ cd ..
+nikita@nikita:~/lb1$ echo '#!/bin/bash
+echo "Running as $(whoami)"' > script.sh
+nikita@nikita:~/lb1$ bash script.sh 
+Running as nikita
+nikita@nikita:~/lb1$ sudo bash script.sh 
+Running as root
+nikita@nikita:~/lb1$ sudo chown root script.sh
+nikita@nikita:~/lb1$ sudo chmod u+s script.sh
+nikita@nikita:~/lb1$ ls -l script.sh
+-rwSrw-r-- 1 root nikita 40 мар 25 17:46 script.sh
+
+# 9.3
+nikita@nikita:~/lb1$ echo "test" > testfile 
+nikita@nikita:~/lb1$ chmod 640 testfile
+nikita@nikita:~/lb1$ sudo chown root:users testfile
+nikita@nikita:~/lb1$ cat testfile 
+test
+nikita@nikita:~/lb1$ echo "new_test" > testfile 
+-bash: testfile: Отказано в доступе
