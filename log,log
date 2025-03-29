@@ -518,20 +518,234 @@ drwxr-x--- 2 root   root   4096 мар 25 17:40 subdir
 nikita@nikita:~/lb1/test_dir$ cd ..
 nikita@nikita:~/lb1$ echo '#!/bin/bash
 echo "Running as $(whoami)"' > script.sh
-nikita@nikita:~/lb1$ bash script.sh 
-Running as nikita
-nikita@nikita:~/lb1$ sudo bash script.sh 
-Running as root
 nikita@nikita:~/lb1$ sudo chown root script.sh
 nikita@nikita:~/lb1$ sudo chmod u+s script.sh
 nikita@nikita:~/lb1$ ls -l script.sh
 -rwSrw-r-- 1 root nikita 40 мар 25 17:46 script.sh
 
 # 9.3
-nikita@nikita:~/lb1$ echo "test" > testfile 
-nikita@nikita:~/lb1$ chmod 640 testfile
-nikita@nikita:~/lb1$ sudo chown root:users testfile
+nikita@nikita:~/lb1$ sudo adduser testuser
+info: Добавляется пользователь «testuser» ...
+info: Выбор UID/GID из диапазона от 1000 до 59999 ...
+info: Добавляется новая группа «testuser» (1001) ...
+info: Добавление нового пользователя `testuser' (1001) в группу `testuser (1001)' ...
+warn: Домашняя директория `/home/testuser' уже существует. Не затрагиваем эту директорию.
+Новый пароль: 
+НЕУДАЧНЫЙ ПАРОЛЬ: Пароль не прошел проверку орфографии - слишком простой
+Повторите ввод нового пароля: 
+passwd: пароль успешно обновлён
+Изменение информации о пользователе testuser
+Введите новое значение или нажмите ENTER для выбора значения по умолчанию
+	Полное имя []: 
+	Номер комнаты []: 
+	Рабочий телефон []: 
+	Домашний телефон []: 
+	Другое []: 
+Данная информация корректна? [Y/n] y
+info: Adding new user `testuser' to supplemental / extra groups `users' ...
+info: Добавляется пользователь «testuser» в группу «users» ...
+nikita@nikita:~/lb1$ sudo usermod -aG nikita testuser
+nikita@nikita:~/lb1$ groups testuser
+testuser : testuser users nikita
+nikita@nikita:~/lb1$ touch testfile
+nikita@nikita:~/lb1$ chmod u=r,g=rw,o= testfile
+nikita@nikita:~/lb1$ ls -l testfile 
+-r--rw---- 1 nikita nikita 0 мар 29 23:03 testfile
+nikita@nikita:~/lb1$ su - testuser
+Пароль: 
+testuser@nikita:~$ cd /home/nikita/lb1
+testuser@nikita:/home/nikita/lb1$ cat testfile 
+testuser@nikita:/home/nikita/lb1$ echo "test" > testfile 
+testuser@nikita:/home/nikita/lb1$ exit
+выход
+
+# 9.4
+nikita@nikita:~/lb1$ chmod u=,g=rw,o=r testfile
+nikita@nikita:~/lb1$ ls -l testfile 
+----rw-r-- 1 nikita nikita 5 мар 29 23:04 testfile
 nikita@nikita:~/lb1$ cat testfile 
+cat: testfile: Отказано в доступе
+nikita@nikita:~/lb1$ echo "test" > testfile
+bash: testfile: Отказано в доступе
+nikita@nikita:~/lb1$ su - testuser
+Пароль: 
+testuser@nikita:~$ cd /home/nikita/lb1 
+testuser@nikita:/home/nikita/lb1$ cat testfile
 test
-nikita@nikita:~/lb1$ echo "new_test" > testfile 
--bash: testfile: Отказано в доступе
+testuser@nikita:/home/nikita/lb1$ echo "new" > testfil
+testuser@nikita:/home/nikita/lb1$ exit
+выход
+nikita@nikita:~/lb1$ mkdir testdir  
+nikita@nikita:~/lb1$ chmod u=x,g=rwx,o=rx testdir
+nikita@nikita:~/lb1$ ls -ld testdir/
+d--xrwxr-x 2 nikita nikita 4096 мар 29 23:12 testdir/
+nikita@nikita:~/lb1$ cd testdir/
+nikita@nikita:~/lb1/testdir$ touch newfile
+touch: невозможно выполнить touch для 'newfile': Отказано в доступе
+nikita@nikita:~/lb1/testdir$ ls
+ls: невозможно открыть каталог '.': Отказано в доступе
+nikita@nikita:~/lb1/testdir$ su - testuser
+Пароль: 
+testuser@nikita:~$ cd /home/nikita/lb1/testdir  
+testuser@nikita:/home/nikita/lb1/testdir$ touch newfile
+testuser@nikita:/home/nikita/lb1/testdir$ ls
+newfile
+testuser@nikita:/home/nikita/lb1/testdir$ rm newfile
+testuser@nikita:/home/nikita/lb1/testdir$ exit
+выход
+nikita@nikita:~/lb1/testdir$ cd ..
+nikita@nikita:~/lb1$ 
+
+
+# Task 10
+nikita@nikita:~/lb1$ vim task10.c
+nikita@nikita:~/lb1$ gcc -o gate task10.c
+nikita@nikita:~/lb1$ su - testuser
+Пароль: 
+testuser@nikita:~$ echo "Top Secret 123" > secret.txt
+testuser@nikita:~$ chmod u=rw,go= secret.txt
+testuser@nikita:~$ exit
+выход
+nikita@nikita:~/lb1$ cat /home/testuser/secret.txt
+cat: /home/testuser/secret.txt: Отказано в доступе
+nikita@nikita:~/lb1$ sudo chown testuser gate
+nikita@nikita:~/lb1$ sudo chmod u=rwxs,go=rx gate
+nikita@nikita:~/lb1$ ls -l gate
+-rwsr-xr-x 1 testuser nikita 16296 мар 29 23:28 gate
+nikita@nikita:~/lb1$ ./gate /home/testuser/secret.txt
+Top Secret 123
+nikita@nikita:~/lb1$ sudo usermod -aG testuser nikita
+nikita@nikita:~/lb1$ su - testuser
+Пароль: 
+testuser@nikita:~$ chown :testuser secret.txt
+testuser@nikita:~$ exit
+выход
+nikita@nikita:~/lb1$ ./gate /home/testuser/secret.txt
+Top Secret 123
+nikita@nikita:~/lb1$ cat /home/testuser/secret.txt
+cat: /home/testuser/secret.txt: Отказано в доступе
+nikita@nikita:~/lb1$ sudo deluser nikita testuser
+info: Удаляется пользователь «nikita» из группы «testuser» ...
+
+
+# Task 11
+# 11.1
+nikita@nikita:~/lb1$ df -h
+Файл.система   Размер Использовано  Дост Использовано% Cмонтировано в
+tmpfs            790M         2,2M  788M            1% /run
+/dev/sda2         20G          11G  7,6G           60% /
+tmpfs            3,9G            0  3,9G            0% /dev/shm
+tmpfs            5,0M         8,0K  5,0M            1% /run/lock
+tmpfs            790M         144K  790M            1% /run/user/1000
+/dev/sr1         6,0G         6,0G     0          100% /media/nikita/Ubuntu 24.04.2 LTS amd64
+/dev/sr0          90M          90M     0          100% /media/nikita/CDROM
+nikita@nikita:~/lb1$ cat /etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda2 during curtin installation
+/dev/disk/by-uuid/71e69640-e010-4e73-a1c8-c81d25cc2291 / ext4 defaults 0 1
+/swap.img	none	swap	sw	0	0
+nikita@nikita:~/lb1$ blkid
+/dev/sda2: UUID="71e69640-e010-4e73-a1c8-c81d25cc2291" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="e55d1b87-efc2-4f9b-9be0-049c32c9caf2"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2025-03-23-16-29-31-00" LABEL="CDROM" TYPE="iso9660"
+/dev/sr1: BLOCK_SIZE="2048" UUID="2025-02-15-09-15-26-00" LABEL="Ubuntu 24.04.2 LTS amd64" TYPE="iso9660" PTTYPE="PMBR"
+
+# 11.2
+nikita@nikita:~/lb1$ lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+fd0      2:0    1     4K  0 disk 
+loop0    7:0    0     4K  1 loop /snap/bare/5
+loop1    7:1    0  73,9M  1 loop /snap/core22/1748
+loop2    7:2    0  11,1M  1 loop /snap/firmware-updater/167
+loop3    7:3    0   516M  1 loop /snap/gnome-42-2204/202
+loop4    7:4    0  91,7M  1 loop /snap/gtk-common-themes/1535
+loop5    7:5    0   258M  1 loop /snap/firefox/5751
+loop6    7:6    0  10,8M  1 loop /snap/snap-store/1248
+loop7    7:7    0  44,4M  1 loop /snap/snapd/23545
+loop8    7:8    0   568K  1 loop /snap/snapd-desktop-integration/253
+loop9    7:9    0 210,4M  1 loop /snap/thunderbird/644
+loop10   7:10   0 258,3M  1 loop /snap/firefox/5917
+loop11   7:11   0 210,8M  1 loop /snap/thunderbird/684
+loop12   7:12   0  73,9M  1 loop /snap/core22/1802
+sda      8:0    0    20G  0 disk 
+├─sda1   8:1    0     1M  0 part 
+└─sda2   8:2    0    20G  0 part /
+sr0     11:0    1  89,5M  0 rom  /media/nikita/CDROM
+sr1     11:1    1   5,9G  0 rom  /media/nikita/Ubuntu 24.04.2 LTS amd64
+
+# 11.3
+nikita@nikita:~/lb1$ cat /usr/include/linux/limits.h
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+#ifndef _LINUX_LIMITS_H
+#define _LINUX_LIMITS_H
+
+#define NR_OPEN	        1024
+
+#define NGROUPS_MAX    65536	/* supplemental group IDs are available */
+#define ARG_MAX       131072	/* # bytes of args + environ for exec() */
+#define LINK_MAX         127	/* # links a file may have */
+#define MAX_CANON        255	/* size of the canonical input queue */
+#define MAX_INPUT        255	/* size of the type-ahead buffer */
+#define NAME_MAX         255	/* # chars in a file name */
+#define PATH_MAX        4096	/* # chars in a path name including nul */
+#define PIPE_BUF        4096	/* # bytes in atomic write to a pipe */
+#define XATTR_NAME_MAX   255	/* # chars in an extended attribute name */
+#define XATTR_SIZE_MAX 65536	/* size of an extended attribute value (64k) */
+#define XATTR_LIST_MAX 65536	/* size of extended attribute namelist (64k) */
+
+#define RTSIG_MAX	  32
+
+#endif
+
+nikita@nikita:~/lb1$ find ~ -type f 2>/dev/null | awk '{print length, $0}' | sort -nr | head -1
+171 /home/nikita/snap/firefox/common/.mozilla/firefox/q6nythvs.default/datareporting/archived/2025-03/1742738088957.620206e8-3a72-4ff1-bb05-463baf3f4758.first-shutdown.jsonlz4
+nikita@nikita:~/lb1$ long_path=$(printf '%0.sa' {1..4100})
+nikita@nikita:~/lb1$ mkdir -p "$long_path"
+mkdir: невозможно создать каталог «aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa»: Слишком длинное имя файла
+
+
+# Task 12
+# 12.1
+nikita@nikita:~/lb1$ man file
+nikita@nikita:~/lb1$ file task1
+task10.c  task1.sh  
+nikita@nikita:~/lb1$ file task1.sh 
+task1.sh: Bourne-Again shell script, Unicode text, UTF-8 text executable
+nikita@nikita:~/lb1$ file textfile.txt 
+textfile.txt: ASCII text
+nikita@nikita:~/lb1$ file task10.c 
+task10.c: C source, Unicode text, UTF-8 text
+
+# 12.2
+nikita@nikita:~/lb1$ file -i /bin/ls
+/bin/ls: application/x-pie-executable; charset=binary
+nikita@nikita:~/lb1$ file -L /bin/sh
+/bin/sh: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=e539bfe5396509ecc0851c4efed2e91a9d4107d5, for GNU/Linux 3.2.0, stripped
+nikita@nikita:~/lb1$ file -b textfile.txt 
+ASCII text
+nikita@nikita:~/lb1$ file -e elf script.sh
+script.sh: setuid Bourne-Again shell script, ASCII text executable
+nikita@nikita:~/lb1$ file -k /bin/ls
+/bin/ls: ELF 64-bit LSB pie executable, x86-64, version 1\012-  (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=3eca7e3905b37d48cf0a88b576faa7b95cc3097b, for GNU/Linux 3.2.0, stripped\012- data
+
+# 12.3
+nikita@nikita:~/lb1$ echo -ne "\x54\x45\x53\x54\x43\x55\x53\x54\x4F\x4D" > custom.file
+nikita@nikita:~/lb1$ xxd custom.file
+00000000: 5445 5354 4355 5354 4f4d                 TESTCUSTOM
+nikita@nikita:~/lb1$ sudo nano /etc/magic.local
+[sudo] пароль для nikita: 
+nikita@nikita:~/lb1$ echo "0 string TESTCUSTOM Custom File Type" | sudo tee -a /etc/magic.local
+0 string TESTCUSTOM Custom File Type
+nikita@nikita:~/lb1$ nikita@nikita:~/lb1$ tail -n 1 /etc/magic.local
+0 string TESTCUSTOM Custom File Type
+bash: nikita@nikita:~/lb1$: Нет такого файла или каталога
+0: команда не найдена
+nikita@nikita:~/lb1$  tail -n 1 /etc/magic.local
+0 string TESTCUSTOM Custom File Type
+nikita@nikita:~/lb1$ file custom.file 
+custom.file: ASCII text, with no line terminators
