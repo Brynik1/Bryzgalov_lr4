@@ -66,3 +66,1025 @@ nikita@nikita:~$ cd lb2/
 
 
 
+# 1. Управление заданиями
+
+# 1.1
+nikita@nikita:~/lb2$ echo "text" > file.txt
+nikita@nikita:~/lb2$ lpr file.txt & sleep 10 & sleep 15 &
+[1] 47559
+[2] 47560
+[3] 47561
+nikita@nikita:~/lb2$ jobs
+[1]   Завершён        lpr file.txt
+[2]-  Запущен          sleep 10 &
+[3]+  Запущен          sleep 15 &
+nikita@nikita:~/lb2$ jobs
+[2]-  Завершён        sleep 10
+[3]+  Запущен          sleep 15 &
+nikita@nikita:~/lb2$ jobs
+[3]+  Завершён        sleep 15
+
+# Запускаем процесс с всплывающим уведомлением о завершении 
+nikita@nikita:~/lb2$ sleep 5 && notify-send "Процесс завершен" "sleep 5 успешно завершен" &
+[1] 47730
+
+nikita@nikita:~/lb2$ sleep 30 & sleep 40 & sleep 50 &
+[1] 47747
+[2] 47748
+[3] 47749
+nikita@nikita:~/lb2$ jobs
+[1]   Запущен          sleep 30 &
+[2]-  Запущен          sleep 40 &
+[3]+  Запущен          sleep 50 &
+
+# Переключаемся на процесс [1] и завершаем его через cntr + c
+nikita@nikita:~/lb2$ fg %1
+sleep 30
+^C
+# Завершаем процессы [3] и [2] с помощью kill
+nikita@nikita:~/lb2$ kill %3
+nikita@nikita:~/lb2$ jobs
+[2]-  Запущен          sleep 40 &
+[3]+  Завершено      sleep 50
+nikita@nikita:~/lb2$ kill %2
+nikita@nikita:~/lb2$ jobs
+[2]+  Завершено      sleep 40
+
+
+# 1.2 
+nikita@nikita:~/lb2$ nohup sleep 1000 &
+[1] 47908
+nikita@nikita:~/lb2$ nohup: ввод игнорируется, вывод добавляется в 'nohup.out'
+nikita@nikita:~/lb2$ jobs
+[1]+  Запущен          nohup sleep 1000 &
+
+# Выход из системы
+nikita@nikita:~/lb2$ exit
+
+# Повторный вход
+# Процесс продолжает работу после выхода из системы благодаря команде nohup
+nikita@nikita:~/lb2$ ps aux | grep sleep
+nikita     47908  0.0  0.0  17436  2368 ?        S    18:22   0:00 sleep 1000
+nikita     47934  0.0  0.0  17836  2424 pts/0    S+   18:23   0:00 grep --color=auto sleep
+nikita@nikita:~/lb2$ kill 47908
+nikita@nikita:~/lb2$ ps aux | grep sleep
+nikita     47937  0.0  0.0  17836  2308 pts/0    S+   18:23   0:00 grep --color=auto sleep
+nikita@nikita:~/lb2$ 
+
+
+# 1.3
+# Запускаем процесс от имени пользователя nikita
+nikita@nikita:~/lb2$ sleep 50 &
+[1] 48118
+nikita@nikita:~/lb2$ ps -eo uid,pid,cmd | grep -E "sleep"
+ 1000   48118 sleep 50
+ 1000   48123 grep --color=auto -E sleep
+# Для процесса "sleep 50 &" 
+PID=48118
+UID=1000 (запускал пользователь nikita)
+
+# Запускаем процесс от имени суперпользователя
+nikita@nikita:~/lb2$ sudo sleep 50 &
+[2] 48133
+nikita@nikita:~/lb2$ ps -eo uid,pid,cmd | grep -E "sleep"
+ 1000   48118 sleep 50
+    0   48133 sudo sleep 50
+    0   48134 sudo sleep 50
+    0   48135 sleep 50
+ 1000   48137 grep --color=auto -E sleep
+# Для процесса "sudo sleep 50 &" 
+PID 48133: оригинальная команда sudo sleep
+PID 48134: дочерний процесс sudo для проверки прав
+PID 48135: реальный sleep с правами root
+UID 0: пользователь root
+
+# Выведем все процессы и заметим, что минимальный UID=0, минимальный PID=1 (принадлежит systemd), максимальный PID=48174 (принадлежит текущей команде ps)
+nikita@nikita:~/lb2$ ps -eo uid,pid,comm
+  UID     PID COMMAND
+    0       1 systemd
+    0       2 kthreadd
+    0       3 pool_workqueue_release
+    0       4 kworker/R-rcu_gp
+    0       5 kworker/R-sync_wq
+    0       6 kworker/R-slub_flushwq
+    0       7 kworker/R-netns
+    0       9 kworker/0:0H-events_highpri
+    0      11 kworker/u512:0-ipv6_addrconf
+    0      12 kworker/R-mm_percpu_wq
+    0      13 rcu_tasks_kthread
+    0      14 rcu_tasks_rude_kthread
+    0      15 rcu_tasks_trace_kthread
+    0      16 ksoftirqd/0
+    0      17 rcu_preempt
+    0      18 rcu_exp_par_gp_kthread_worker/1
+    0      19 rcu_exp_gp_kthread_worker
+    0      20 migration/0
+    0      21 idle_inject/0
+    0      22 cpuhp/0
+    0      23 cpuhp/1
+    0      24 idle_inject/1
+    0      25 migration/1
+    0      26 ksoftirqd/1
+    0      29 cpuhp/2
+    0      30 idle_inject/2
+    0      31 migration/2
+    0      32 ksoftirqd/2
+    0      34 kworker/2:0H-kblockd
+    0      35 cpuhp/3
+    0      36 idle_inject/3
+    0      37 migration/3
+    0      38 ksoftirqd/3
+    0      40 kworker/3:0H-events_highpri
+    0      45 kdevtmpfs
+    0      46 kworker/R-inet_frag_wq
+    0      48 kauditd
+    0      49 khungtaskd
+    0      50 oom_reaper
+    0      52 kworker/R-writeback
+    0      53 kcompactd0
+    0      54 ksmd
+    0      55 khugepaged
+    0      56 kworker/R-kintegrityd
+    0      57 kworker/R-kblockd
+    0      58 kworker/R-blkcg_punt_bio
+    0      59 irq/9-acpi
+    0      61 kworker/R-tpm_dev_wq
+    0      62 kworker/R-ata_sff
+    0      63 kworker/R-md
+    0      64 kworker/R-md_bitmap
+    0      65 kworker/R-edac-poller
+    0      66 kworker/R-devfreq_wq
+    0      67 watchdogd
+    0      71 kswapd0
+    0      72 ecryptfs-kthread
+    0      73 kworker/R-kthrotld
+    0      74 irq/24-pciehp
+    0      75 irq/25-pciehp
+    0      76 irq/26-pciehp
+    0      77 irq/27-pciehp
+    0      78 irq/28-pciehp
+    0      79 irq/29-pciehp
+    0      80 irq/30-pciehp
+    0      81 irq/31-pciehp
+    0      82 irq/32-pciehp
+    0      83 irq/33-pciehp
+    0      84 irq/34-pciehp
+    0      85 irq/35-pciehp
+    0      86 irq/36-pciehp
+    0      87 irq/37-pciehp
+    0      88 irq/38-pciehp
+    0      89 irq/39-pciehp
+    0      90 irq/40-pciehp
+    0      91 irq/41-pciehp
+    0      92 irq/42-pciehp
+    0      93 irq/43-pciehp
+    0      94 irq/44-pciehp
+    0      95 irq/45-pciehp
+    0      96 irq/46-pciehp
+    0      97 irq/47-pciehp
+    0      98 irq/48-pciehp
+    0      99 irq/49-pciehp
+    0     100 irq/50-pciehp
+    0     101 irq/51-pciehp
+    0     102 irq/52-pciehp
+    0     103 irq/53-pciehp
+    0     104 irq/54-pciehp
+    0     105 irq/55-pciehp
+    0     106 kworker/R-acpi_thermal_pm
+    0     108 scsi_eh_0
+    0     109 kworker/R-scsi_tmf_0
+    0     110 scsi_eh_1
+    0     111 kworker/R-scsi_tmf_1
+    0     117 kworker/R-mld
+    0     118 kworker/2:1H-kblockd
+    0     119 kworker/R-ipv6_addrconf
+    0     121 kworker/u512:1-ipv6_addrconf
+    0     129 kworker/R-kstrp
+    0     131 kworker/u517:0-hci0
+    0     148 kworker/R-charger_manager
+    0     149 kworker/0:1H-kblockd
+    0     204 kworker/R-mpt_poll_0
+    0     205 kworker/R-mpt/0
+    0     216 scsi_eh_2
+    0     218 kworker/R-scsi_tmf_2
+    0     219 scsi_eh_3
+    0     220 kworker/R-scsi_tmf_3
+    0     221 scsi_eh_4
+    0     222 kworker/R-scsi_tmf_4
+    0     223 scsi_eh_5
+    0     224 kworker/R-scsi_tmf_5
+    0     225 scsi_eh_6
+    0     226 kworker/R-scsi_tmf_6
+    0     227 scsi_eh_7
+    0     228 kworker/R-scsi_tmf_7
+    0     229 scsi_eh_8
+    0     230 kworker/R-scsi_tmf_8
+    0     231 scsi_eh_9
+    0     232 kworker/R-scsi_tmf_9
+    0     233 scsi_eh_10
+    0     234 kworker/R-scsi_tmf_10
+    0     235 scsi_eh_11
+    0     236 kworker/R-scsi_tmf_11
+    0     237 scsi_eh_12
+    0     238 kworker/R-scsi_tmf_12
+    0     239 scsi_eh_13
+    0     240 kworker/R-scsi_tmf_13
+    0     241 scsi_eh_14
+    0     242 kworker/R-scsi_tmf_14
+    0     243 scsi_eh_15
+    0     244 kworker/R-scsi_tmf_15
+    0     245 scsi_eh_16
+    0     246 kworker/R-scsi_tmf_16
+    0     247 scsi_eh_17
+    0     248 kworker/R-scsi_tmf_17
+    0     249 scsi_eh_18
+    0     250 kworker/R-scsi_tmf_18
+    0     251 scsi_eh_19
+    0     252 kworker/R-scsi_tmf_19
+    0     253 scsi_eh_20
+    0     254 kworker/R-scsi_tmf_20
+    0     255 scsi_eh_21
+    0     256 kworker/R-scsi_tmf_21
+    0     257 scsi_eh_22
+    0     258 kworker/R-scsi_tmf_22
+    0     259 scsi_eh_23
+    0     260 kworker/R-scsi_tmf_23
+    0     261 scsi_eh_24
+    0     262 kworker/R-scsi_tmf_24
+    0     263 scsi_eh_25
+    0     264 kworker/R-scsi_tmf_25
+    0     265 scsi_eh_26
+    0     266 kworker/R-scsi_tmf_26
+    0     267 scsi_eh_27
+    0     268 kworker/R-scsi_tmf_27
+    0     269 scsi_eh_28
+    0     270 kworker/R-scsi_tmf_28
+    0     271 scsi_eh_29
+    0     272 kworker/R-scsi_tmf_29
+    0     273 scsi_eh_30
+    0     274 kworker/R-scsi_tmf_30
+    0     275 scsi_eh_31
+    0     276 kworker/R-scsi_tmf_31
+    0     277 scsi_eh_32
+    0     278 kworker/R-scsi_tmf_32
+    0     355 jbd2/sda2-8
+    0     356 kworker/R-ext4-rsv-conversion
+    0     404 systemd-journal
+    0     441 vmware-vmblock-
+    0     452 irq/16-vmwgfx
+    0     454 kworker/R-ttm
+    0     458 systemd-udevd
+    0     501 psimon
+  990     727 systemd-oomd
+  991     729 systemd-resolve
+  996     732 systemd-timesyn
+    0     777 VGAuthService
+    0     787 vmtoolsd
+    0     798 irq/57-vmw_vmci
+    0     799 irq/58-vmw_vmci
+    0     801 irq/59-vmw_vmci
+  108    1027 avahi-daemon
+  101    1031 dbus-daemon
+  988    1043 gnome-remote-de
+  987    1062 polkitd
+    0    1067 power-profiles-
+    0    1089 snapd
+    0    1097 accounts-daemon
+    0    1105 cron
+    0    1118 switcheroo-cont
+    0    1144 systemd-logind
+    0    1148 udisksd
+  102    1174 rsyslogd
+  108    1204 avahi-daemon
+    0    1212 NetworkManager
+    0    1221 wpa_supplicant
+    0    1272 ModemManager
+    0    1418 kworker/u517:2-hci0
+    0    1456 kworker/R-cryptd
+    0    1584 bluetoothd
+    0    1639 unattended-upgr
+    0    1710 gdm3
+  117    1786 rtkit-daemon
+  106    1862 kerneloops
+  106    1867 kerneloops
+  118    1921 colord
+    0    1969 upowerd
+    0    2284 gdm-session-wor
+ 1000    2296 systemd
+ 1000    2301 (sd-pam)
+ 1000    2311 pipewire
+ 1000    2317 pipewire
+ 1000    2322 wireplumber
+ 1000    2324 pipewire-pulse
+ 1000    2327 gnome-keyring-d
+ 1000    2332 dbus-daemon
+ 1000    2374 xdg-document-po
+ 1000    2378 xdg-permission-
+ 1000    2385 gdm-wayland-ses
+ 1000    2394 gnome-session-b
+    0    2397 fusermount3
+ 1000    2472 gcr-ssh-agent
+ 1000    2473 gnome-session-c
+ 1000    2488 gvfsd
+ 1000    2496 gvfsd-fuse
+ 1000    2498 gnome-session-b
+ 1000    2537 gnome-shell
+ 1000    2541 at-spi-bus-laun
+ 1000    2554 dbus-daemon
+ 1000    2625 at-spi2-registr
+ 1000    2637 gnome-shell-cal
+ 1000    2660 evolution-sourc
+ 1000    2671 gjs
+ 1000    2681 ibus-daemon
+ 1000    2684 gsd-a11y-settin
+ 1000    2685 gsd-color
+ 1000    2698 gsd-datetime
+ 1000    2699 gsd-housekeepin
+ 1000    2703 gsd-keyboard
+ 1000    2704 gsd-media-keys
+ 1000    2706 gsd-power
+ 1000    2707 gsd-print-notif
+ 1000    2709 gsd-rfkill
+ 1000    2723 gsd-screensaver
+ 1000    2725 gsd-sharing
+ 1000    2728 gsd-smartcard
+ 1000    2734 gsd-sound
+ 1000    2736 gsd-wacom
+ 1000    2743 gvfs-udisks2-vo
+ 1000    2744 evolution-alarm
+ 1000    2796 ibus-dconf
+ 1000    2800 ibus-extension-
+ 1000    2804 vmtoolsd
+ 1000    2810 gsd-disk-utilit
+ 1000    2820 ibus-portal
+ 1000    2869 gsd-printer
+ 1000    2940 gvfs-goa-volume
+ 1000    2964 goa-daemon
+ 1000    2978 goa-identity-se
+ 1000    2989 gvfs-mtp-volume
+ 1000    2997 evolution-calen
+ 1000    2998 gvfs-afc-volume
+ 1000    3007 gvfs-gphoto2-vo
+ 1000    3014 Xwayland
+ 1000    3024 evolution-addre
+ 1000    3060 ibus-engine-sim
+ 1000    3061 snapd-desktop-i
+ 1000    3092 dconf-service
+ 1000    3151 snapd-desktop-i
+ 1000    3167 gvfsd-metadata
+ 1000    3168 gvfsd-trash
+ 1000    3217 tracker-miner-f
+ 1000    3225 gjs
+ 1000    3244 xdg-desktop-por
+ 1000    3273 xdg-desktop-por
+ 1000    3307 gjs
+ 1000    3331 gsd-xsettings
+ 1000    3364 xdg-desktop-por
+ 1000    3372 ibus-x11
+ 1000    3379 mutter-x11-fram
+ 1000    3481 gvfsd-recent
+ 1000    3537 update-notifier
+    0    4111 kworker/1:2H-kblockd
+    0   11157 fwupd
+    0   12900 kworker/1:0H-kblockd
+ 1000   24356 snap
+    0   36866 kworker/3:2H-kblockd
+    0   37227 kworker/u521:0-ttm
+    0   37925 psimon
+    0   45457 kworker/u519:1-ttm
+    0   46364 kworker/u513:0-flush-8:0
+    0   46469 cupsd
+  115   46472 cups-browsed
+    7   46489 dbus
+    0   47442 kworker/u515:3-events_freezable_pwr_efficient
+    0   47474 kworker/u514:2-events_power_efficient
+    0   47752 kworker/u518:1-ttm
+    0   47783 kworker/u519:2-ttm
+ 1000   47788 nautilus
+    0   47800 kworker/u520:0-ttm
+    0   47822 kworker/u516:3-flush-8:0
+    0   47841 kworker/u518:7-ttm
+    0   47880 kworker/2:2-events
+    0   47902 kworker/u516:2-events_unbound
+    0   47910 kworker/u521:1-ttm
+    0   47938 kworker/u515:0-events_power_efficient
+    0   47955 kworker/u514:3-events_unbound
+    0   47997 kworker/3:1-events
+    0   48021 kworker/u513:1-events_power_efficient
+    0   48032 kworker/3:2-events
+    0   48034 kworker/u513:2
+    0   48035 kworker/u515:1-events_power_efficient
+    0   48045 kworker/2:1-events
+    0   48092 kworker/1:0-mm_percpu_wq
+    0   48093 kworker/u516:0-events_power_efficient
+    0   48102 kworker/u520:2
+ 1000   48103 gnome-terminal-
+ 1000   48110 bash
+    0   48127 kworker/0:0-events
+    0   48141 kworker/u514:1-events_unbound
+    0   48153 kworker/1:2-events
+    0   48154 kworker/3:0-events
+    0   48162 kworker/0:2-events
+    0   48163 kworker/2:0-events
+    0   48167 kworker/1:1-events
+    0   48170 kworker/u513:3-events_unbound
+    0   48171 kworker/0:1-events
+    0   48172 kworker/u514:0-events_power_efficient
+ 1000   48174 ps
+
+
+
+# 1.4
+# Системные процессы отличаются от других тем, что имеют UID < 1000, PPID = 1 (запущены напрямую от systemd/init) или PPID = 2 (ядерные потоки, родитель — kthreadd)
+# Пример команды для поиска системных процессов:
+nikita@nikita:~/lb2$ ps -eo uid,pid,ppid,comm --sort -uid | awk '$1 <= 999 && ($2 == 1 || $3 == 1 || $3 == 2)'
+  996     732       1 systemd-timesyn
+  991     729       1 systemd-resolve
+  990     727       1 systemd-oomd
+  988    1043       1 gnome-remote-de
+  987    1062       1 polkitd
+  118    1921       1 colord
+  117    1786       1 rtkit-daemon
+  115   46472       1 cups-browsed
+  108    1027       1 avahi-daemon
+  106    1862       1 kerneloops
+  106    1867       1 kerneloops
+  102    1174       1 rsyslogd
+  101    1031       1 dbus-daemon
+    0       1       0 systemd
+    0       3       2 pool_workqueue_release
+    0       4       2 kworker/R-rcu_gp
+    0       5       2 kworker/R-sync_wq
+    0       6       2 kworker/R-slub_flushwq
+    0       7       2 kworker/R-netns
+    0       9       2 kworker/0:0H-events_highpri
+    0      11       2 kworker/u512:0-ipv6_addrconf
+    0      12       2 kworker/R-mm_percpu_wq
+    0      13       2 rcu_tasks_kthread
+    0      14       2 rcu_tasks_rude_kthread
+    0      15       2 rcu_tasks_trace_kthread
+    0      16       2 ksoftirqd/0
+    0      17       2 rcu_preempt
+    0      18       2 rcu_exp_par_gp_kthread_worker/1
+    0      19       2 rcu_exp_gp_kthread_worker
+    0      20       2 migration/0
+    0      21       2 idle_inject/0
+    0      22       2 cpuhp/0
+    0      23       2 cpuhp/1
+    0      24       2 idle_inject/1
+    0      25       2 migration/1
+    0      26       2 ksoftirqd/1
+    0      29       2 cpuhp/2
+    0      30       2 idle_inject/2
+    0      31       2 migration/2
+    0      32       2 ksoftirqd/2
+    0      34       2 kworker/2:0H-kblockd
+    0      35       2 cpuhp/3
+    0      36       2 idle_inject/3
+    0      37       2 migration/3
+    0      38       2 ksoftirqd/3
+    0      40       2 kworker/3:0H-events_highpri
+    0      45       2 kdevtmpfs
+    0      46       2 kworker/R-inet_frag_wq
+    0      48       2 kauditd
+    0      49       2 khungtaskd
+    0      50       2 oom_reaper
+    0      52       2 kworker/R-writeback
+    0      53       2 kcompactd0
+    0      54       2 ksmd
+    0      55       2 khugepaged
+    0      56       2 kworker/R-kintegrityd
+    0      57       2 kworker/R-kblockd
+    0      58       2 kworker/R-blkcg_punt_bio
+    0      59       2 irq/9-acpi
+    0      61       2 kworker/R-tpm_dev_wq
+    0      62       2 kworker/R-ata_sff
+    0      63       2 kworker/R-md
+    0      64       2 kworker/R-md_bitmap
+    0      65       2 kworker/R-edac-poller
+    0      66       2 kworker/R-devfreq_wq
+    0      67       2 watchdogd
+    0      71       2 kswapd0
+    0      72       2 ecryptfs-kthread
+    0      73       2 kworker/R-kthrotld
+    0      74       2 irq/24-pciehp
+    0      75       2 irq/25-pciehp
+    0      76       2 irq/26-pciehp
+    0      77       2 irq/27-pciehp
+    0      78       2 irq/28-pciehp
+    0      79       2 irq/29-pciehp
+    0      80       2 irq/30-pciehp
+    0      81       2 irq/31-pciehp
+    0      82       2 irq/32-pciehp
+    0      83       2 irq/33-pciehp
+    0      84       2 irq/34-pciehp
+    0      85       2 irq/35-pciehp
+    0      86       2 irq/36-pciehp
+    0      87       2 irq/37-pciehp
+    0      88       2 irq/38-pciehp
+    0      89       2 irq/39-pciehp
+    0      90       2 irq/40-pciehp
+    0      91       2 irq/41-pciehp
+    0      92       2 irq/42-pciehp
+    0      93       2 irq/43-pciehp
+    0      94       2 irq/44-pciehp
+    0      95       2 irq/45-pciehp
+    0      96       2 irq/46-pciehp
+    0      97       2 irq/47-pciehp
+    0      98       2 irq/48-pciehp
+    0      99       2 irq/49-pciehp
+    0     100       2 irq/50-pciehp
+    0     101       2 irq/51-pciehp
+    0     102       2 irq/52-pciehp
+    0     103       2 irq/53-pciehp
+    0     104       2 irq/54-pciehp
+    0     105       2 irq/55-pciehp
+    0     106       2 kworker/R-acpi_thermal_pm
+    0     108       2 scsi_eh_0
+    0     109       2 kworker/R-scsi_tmf_0
+    0     110       2 scsi_eh_1
+    0     111       2 kworker/R-scsi_tmf_1
+    0     117       2 kworker/R-mld
+    0     118       2 kworker/2:1H-kblockd
+    0     119       2 kworker/R-ipv6_addrconf
+    0     121       2 kworker/u512:1-ipv6_addrconf
+    0     129       2 kworker/R-kstrp
+    0     131       2 kworker/u517:0-hci0
+    0     148       2 kworker/R-charger_manager
+    0     149       2 kworker/0:1H-kblockd
+    0     204       2 kworker/R-mpt_poll_0
+    0     205       2 kworker/R-mpt/0
+    0     216       2 scsi_eh_2
+    0     218       2 kworker/R-scsi_tmf_2
+    0     219       2 scsi_eh_3
+    0     220       2 kworker/R-scsi_tmf_3
+    0     221       2 scsi_eh_4
+    0     222       2 kworker/R-scsi_tmf_4
+    0     223       2 scsi_eh_5
+    0     224       2 kworker/R-scsi_tmf_5
+    0     225       2 scsi_eh_6
+    0     226       2 kworker/R-scsi_tmf_6
+    0     227       2 scsi_eh_7
+    0     228       2 kworker/R-scsi_tmf_7
+    0     229       2 scsi_eh_8
+    0     230       2 kworker/R-scsi_tmf_8
+    0     231       2 scsi_eh_9
+    0     232       2 kworker/R-scsi_tmf_9
+    0     233       2 scsi_eh_10
+    0     234       2 kworker/R-scsi_tmf_10
+    0     235       2 scsi_eh_11
+    0     236       2 kworker/R-scsi_tmf_11
+    0     237       2 scsi_eh_12
+    0     238       2 kworker/R-scsi_tmf_12
+    0     239       2 scsi_eh_13
+    0     240       2 kworker/R-scsi_tmf_13
+    0     241       2 scsi_eh_14
+    0     242       2 kworker/R-scsi_tmf_14
+    0     243       2 scsi_eh_15
+    0     244       2 kworker/R-scsi_tmf_15
+    0     245       2 scsi_eh_16
+    0     246       2 kworker/R-scsi_tmf_16
+    0     247       2 scsi_eh_17
+    0     248       2 kworker/R-scsi_tmf_17
+    0     249       2 scsi_eh_18
+    0     250       2 kworker/R-scsi_tmf_18
+    0     251       2 scsi_eh_19
+    0     252       2 kworker/R-scsi_tmf_19
+    0     253       2 scsi_eh_20
+    0     254       2 kworker/R-scsi_tmf_20
+    0     255       2 scsi_eh_21
+    0     256       2 kworker/R-scsi_tmf_21
+    0     257       2 scsi_eh_22
+    0     258       2 kworker/R-scsi_tmf_22
+    0     259       2 scsi_eh_23
+    0     260       2 kworker/R-scsi_tmf_23
+    0     261       2 scsi_eh_24
+    0     262       2 kworker/R-scsi_tmf_24
+    0     263       2 scsi_eh_25
+    0     264       2 kworker/R-scsi_tmf_25
+    0     265       2 scsi_eh_26
+    0     266       2 kworker/R-scsi_tmf_26
+    0     267       2 scsi_eh_27
+    0     268       2 kworker/R-scsi_tmf_27
+    0     269       2 scsi_eh_28
+    0     270       2 kworker/R-scsi_tmf_28
+    0     271       2 scsi_eh_29
+    0     272       2 kworker/R-scsi_tmf_29
+    0     273       2 scsi_eh_30
+    0     274       2 kworker/R-scsi_tmf_30
+    0     275       2 scsi_eh_31
+    0     276       2 kworker/R-scsi_tmf_31
+    0     277       2 scsi_eh_32
+    0     278       2 kworker/R-scsi_tmf_32
+    0     355       2 jbd2/sda2-8
+    0     356       2 kworker/R-ext4-rsv-conversion
+    0     404       1 systemd-journal
+    0     441       1 vmware-vmblock-
+    0     452       2 irq/16-vmwgfx
+    0     454       2 kworker/R-ttm
+    0     458       1 systemd-udevd
+    0     501       2 psimon
+    0     777       1 VGAuthService
+    0     787       1 vmtoolsd
+    0     798       2 irq/57-vmw_vmci
+    0     799       2 irq/58-vmw_vmci
+    0     801       2 irq/59-vmw_vmci
+    0    1067       1 power-profiles-
+    0    1089       1 snapd
+    0    1097       1 accounts-daemon
+    0    1105       1 cron
+    0    1118       1 switcheroo-cont
+    0    1144       1 systemd-logind
+    0    1148       1 udisksd
+    0    1212       1 NetworkManager
+    0    1221       1 wpa_supplicant
+    0    1272       1 ModemManager
+    0    1418       2 kworker/u517:2-hci0
+    0    1456       2 kworker/R-cryptd
+    0    1584       1 bluetoothd
+    0    1639       1 unattended-upgr
+    0    1710       1 gdm3
+    0    1969       1 upowerd
+    0    4111       2 kworker/1:2H-kblockd
+    0   11157       1 fwupd
+    0   12900       2 kworker/1:0H-kblockd
+    0   36866       2 kworker/3:2H-kblockd
+    0   37227       2 kworker/u521:0-ttm
+    0   37925       2 psimon
+    0   45457       2 kworker/u519:1-ttm
+    0   46469       1 cupsd
+    0   47442       2 kworker/u515:3-events_unbound
+    0   47752       2 kworker/u518:1-ttm
+    0   47822       2 kworker/u516:3-flush-8:0
+    0   47880       2 kworker/2:2-mm_percpu_wq
+    0   47910       2 kworker/u521:1-ttm
+    0   47938       2 kworker/u515:0-events_power_efficient
+    0   47955       2 kworker/u514:3-events_freezable_pwr_efficient
+    0   48021       2 kworker/u513:1-events_power_efficient
+    0   48032       2 kworker/3:2-events
+    0   48034       2 kworker/u513:2-events_unbound
+    0   48035       2 kworker/u515:1-events_unbound
+    0   48092       2 kworker/1:0-events
+    0   48093       2 kworker/u516:0-events_power_efficient
+    0   48102       2 kworker/u520:2-ttm
+    0   48141       2 kworker/u514:1-events_power_efficient
+    0   48170       2 kworker/u513:3-writeback
+    0   48176       2 kworker/u518:0-ttm
+    0   48178       2 kworker/u520:3-ttm
+    0   48179       2 kworker/u519:0-ttm
+    0   48193       2 kworker/0:2-events
+    0   48194       2 kworker/u515:2-events_power_efficient
+    0   48201       2 kworker/0:0-events
+    0   48202       2 kworker/2:1-events
+    0   48208       2 kworker/u514:2-events_power_efficient
+    0   48209       2 kworker/3:1-events
+    0   48210       2 kworker/1:2-events
+    0   48214       2 kworker/u516:1-events_unbound
+    0   48215       2 kworker/0:1-events
+    0   48220       2 kworker/2:0-events
+    0   48232       2 kworker/u520:0
+    0   48233       2 kworker/1:1-events
+    0   48234       2 kworker/3:0-events
+
+
+# 1.5
+nikita@nikita:~/lb2$ echo $$
+48110
+nikita@nikita:~/lb2$ cat /proc/48110/status
+Name:	bash
+Umask:	0002
+State:	S (sleeping)
+Tgid:	48110
+Ngid:	0
+Pid:	48110
+PPid:	48103
+TracerPid:	0
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+FDSize:	256
+Groups:	4 24 27 30 46 100 114 1000 
+NStgid:	48110
+NSpid:	48110
+NSpgid:	48110
+NSsid:	48110
+Kthread:	0
+VmPeak:	   20468 kB
+VmSize:	   20468 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	    5848 kB
+VmRSS:	    5848 kB
+RssAnon:	    1920 kB
+RssFile:	    3928 kB
+RssShmem:	       0 kB
+VmData:	    2036 kB
+VmStk:	     132 kB
+VmExe:	     956 kB
+VmLib:	    1824 kB
+VmPTE:	      68 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	1
+SigQ:	0/31274
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000010000
+SigIgn:	0000000000384004
+SigCgt:	000000004b813efb
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	ffffffff,ffffffff,ffffffff,ffffffff
+Cpus_allowed_list:	0-127
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	339
+nonvoluntary_ctxt_switches:	112
+x86_Thread_features:	
+x86_Thread_features_locked:
+
+# Характеристика процесса:
+bash - имя процесса
+48110 - PID процесса
+48103 - PID родительского процесса
+48110 - идентификатор группы потоков (равен PID для однопоточных процессов)
+1000 - реальный/эффективный/saved/файловый UID пользователя
+S (sleeping) - состояние процесса (S = прерываемый сон)
+Threads: 1 - количество потоков
+Kthread: 0 - не является ядерным потоком
+VmPeak/VmSize: 20468 kB - пиковый/текущий размер виртуальной памяти
+VmRSS: 5848 kB - реально используемая память
+
+
+# 2. Порождение и запуск процессов
+
+# 2.1
+# Процессы с простыми вычислениями
+nikita@nikita:~/lb2$ mkdir task2_1/
+nikita@nikita:~/lb2$ cd task2_1/
+nikita@nikita:~/lb2/task2_1$ vim single_run.c 
+nikita@nikita:~/lb2/task2_1$ gcc single_run.c -o single_run.o
+nikita@nikita:~/lb2/task2_1$ ./single_run.o 
+
+=== Главный процесс запущен (PID: 49336) ===
+[Родительский] Процесс начал работу (PID: 49336, PPID: 48110)
+[Родительский] Промежуточный результат: 5 * 10 = 50
+[Родительский] Процесс завершил вычисления
+[Родительский] Ожидание завершения дочернего процесса...
+[Дочерний] Процесс начал работу (PID: 49337, PPID: 49336)
+[Дочерний] Промежуточный результат: 5 * 10 = 50
+[Дочерний] Процесс завершил вычисления
+[Дочерний] Процесс завершается
+[Родительский] Дочерний процесс завершен
+=== Главный процесс завершен (PID: 49336) ===
+
+# Процессы с долгими вычислениями
+nikita@nikita:~/lb2/task2_1$ vim loop_run.c 
+nikita@nikita:~/lb2/task2_1$ gcc loop_run.c -o loop_run.out
+nikita@nikita:~/lb2/task2_1$ ./loop_run.out 
+
+=== Главный процесс запущен (PID: 49359) ===
+[Родительский] Процесс начал работу (PID: 49359, PPID: 48110)
+[Родительский] Начало долгих вычислений...
+[Дочерний] Процесс начал работу (PID: 49360, PPID: 49359)
+[Дочерний] Начало долгих вычислений...
+[Родительский] Вычисления завершены. Итоговая сумма: 49500000000
+[Родительский] Ожидание завершения дочернего процесса...
+[Дочерний] Вычисления завершены. Итоговая сумма: 49500000000
+[Дочерний] Процесс завершается
+[Родительский] Дочерний процесс завершен
+=== Главный процесс завершен (PID: 49359) ===
+
+# Наблюдается псевдопараллельное выполнение: процессы конкурируют за процессорное время
+# Адресные пространства независимы: каждый процесс имеет свою копию переменной sum
+# Порядок завершения вычислений недетерминирован и зависит от планировщика ОС
+nikita@nikita:~/lb2/task2_1$ cd ..
+
+
+# 2.2
+nikita@nikita:~/lb2$ mkdir task2_2/
+nikita@nikita:~/lb2$ cd task2_2/
+nikita@nikita:~/lb2/task2_2$ vim father.c
+nikita@nikita:~/lb2/task2_2$ vim son.c
+nikita@nikita:~/lb2/task2_2$ gcc father.c -o father.out
+nikita@nikita:~/lb2/task2_2$ gcc son.c -o son.out
+
+nikita@nikita:~/lb2/task2_2$ ./father.out 
+Родительский процесс запущен (PID: 49576)
+Родительский процесс (PID: 49576) ожидает завершения потомка...
+Дочерний процесс (PID: 49577) запускает son.out...
+Дочерний процесс (PID: 49577, PPID: 49576) начал работу.
+Дочерний процесс работает... (1/3)
+Дочерний процесс работает... (2/3)
+Дочерний процесс работает... (3/3)
+Дочерний процесс завершен.
+Родительский процесс завершен.
+nikita@nikita:~/lb2/task2_2$ cat processes_after_wait.txt 
+F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+0 S  1000   48110   48103  0  80   0 -  5150 do_wai pts/0    00:00:01 bash
+0 S  1000   49576   48110  0  80   0 -   670 do_wai pts/0    00:00:00 father.out
+0 S  1000   49580   49576  0  80   0 -   700 do_wai pts/0    00:00:00 sh
+0 R  1000   49581   49580 99  80   0 -  5629 -      pts/0    00:00:00 ps
+nikita@nikita:~/lb2/task2_2$ 
+nikita@nikita:~/lb2/task2_2$ ./father.out &
+[1] 49588
+nikita@nikita:~/lb2/task2_2$ Родительский процесс запущен (PID: 49588)
+Родительский процесс (PID: 49588) ожидает завершения потомка...
+Дочерний процесс (PID: 49589) запускает son.out...
+Дочерний процесс (PID: 49589, PPID: 49588) начал работу.
+Дочерний процесс работает... (1/3)
+Дочерний процесс работает... (2/3)
+Дочерний процесс работает... (3/3)
+Дочерний процесс завершен.
+Родительский процесс завершен.
+[1]+  Завершён        ./father.out
+nikita@nikita:~/lb2/task2_2$ cat processes_after_wait.txt 
+F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+0 S  1000   48110   48103  0  80   0 -  5150 do_sel pts/0    00:00:01 bash
+0 S  1000   49588   48110  0  80   0 -   670 do_wai pts/0    00:00:00 father.out
+0 S  1000   49592   49588  0  80   0 -   700 do_wai pts/0    00:00:00 sh
+0 R  1000   49593   49592 99  80   0 -  5629 -      pts/0    00:00:00 ps
+nikita@nikita:~/lb2/task2_2$ cd ..
+nikita@nikita:~/lb2$ 
+
+
+# 2.3
+# execl()	Запускает программу с аргументами списком (через ,), использует текущее окружение
+# execv()	Запускает программу с аргументами массивом (argv[]), использует текущее окружение
+# execle()	Запускает программу с аргументами списком и своим окружением (envp[])
+# execve()	Запускает программу с аргументами массивом (argv[]) и своим окружением (envp[])
+
+nikita@nikita:~/lb2$ mkdir task2_3
+nikita@nikita:~/lb2$ cd task2_3/
+nikita@nikita:~/lb2/task2_3$ vim father.c
+nikita@nikita:~/lb2/task2_3$ vim son.c
+nikita@nikita:~/lb2/task2_3$ gcc father.c -o father.o
+nikita@nikita:~/lb2/task2_3$ gcc son.c -o son.o
+nikita@nikita:~/lb2/task2_3$ ./father.o 
+
+nikita@nikita:~/lb2/task2_3$ gcc father.c -o father.out
+nikita@nikita:~/lb2/task2_3$ gcc son.c -o son.out
+nikita@nikita:~/lb2/task2_3$ ./father.out 
+
+=== Эксперимент с exec() ===
+Родительский PID: 51122
+
+1. execl():
+Дочерний процесс (PID: 51123)
+Аргументы:
+argv[0] = ./son.out
+argv[1] = arg1
+argv[2] = arg2
+
+Переменные окружения:
+SHELL=/bin/bash
+SESSION_MANAGER=local/nikita:@/tmp/.ICE-unix/2498,unix/nikita:/tmp/.ICE-unix/2498
+QT_ACCESSIBILITY=1
+COLORTERM=truecolor
+XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+XDG_MENU_PREFIX=gnome-
+GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+GNOME_SHELL_SESSION_MODE=ubuntu
+SSH_AUTH_SOCK=/run/user/1000/keyring/ssh
+MEMORY_PRESSURE_WRITE=c29tZSAyMDAwMDAgMjAwMDAwMAA=
+XMODIFIERS=@im=ibus
+DESKTOP_SESSION=ubuntu
+GTK_MODULES=gail:atk-bridge
+DBUS_STARTER_BUS_TYPE=session
+PWD=/home/nikita/lb2/task2_3
+LOGNAME=nikita
+XDG_SESSION_DESKTOP=ubuntu
+XDG_SESSION_TYPE=wayland
+SYSTEMD_EXEC_PID=2498
+XAUTHORITY=/run/user/1000/.mutter-Xwaylandauth.YEXD42
+HOME=/home/nikita
+USERNAME=nikita
+IM_CONFIG_PHASE=1
+LANG=ru_RU.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:
+XDG_CURRENT_DESKTOP=ubuntu:GNOME
+MEMORY_PRESSURE_WATCH=/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome\x2dsession\x2dmanager.slice/gnome-session-manager@ubuntu.service/memory.pressure
+VTE_VERSION=7600
+WAYLAND_DISPLAY=wayland-0
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/03c19b19_7f7e_4156_a788_ce7a0c989c63
+GNOME_SETUP_DISPLAY=:1
+LESSCLOSE=/usr/bin/lesspipe %s %s
+XDG_SESSION_CLASS=user
+TERM=xterm-256color
+LESSOPEN=| /usr/bin/lesspipe %s
+USER=nikita
+GNOME_TERMINAL_SERVICE=:1.202
+DISPLAY=:0
+SHLVL=1
+GSM_SKIP_SSH_AGENT_WORKAROUND=true
+QT_IM_MODULE=ibus
+DBUS_STARTER_ADDRESS=unix:path=/run/user/1000/bus,guid=d29b8e420e80c5040e8a362267e055be
+XDG_RUNTIME_DIR=/run/user/1000
+DEBUGINFOD_URLS=https://debuginfod.ubuntu.com 
+XDG_DATA_DIRS=/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin
+GDMSESSION=ubuntu
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus,guid=d29b8e420e80c5040e8a362267e055be
+_=./father.out
+OLDPWD=/home/nikita/lb2
+
+2. execv():
+Дочерний процесс (PID: 51124)
+Аргументы:
+argv[0] = ./son.out
+argv[1] = arg1
+argv[2] = arg2
+
+Переменные окружения:
+SHELL=/bin/bash
+SESSION_MANAGER=local/nikita:@/tmp/.ICE-unix/2498,unix/nikita:/tmp/.ICE-unix/2498
+QT_ACCESSIBILITY=1
+COLORTERM=truecolor
+XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+XDG_MENU_PREFIX=gnome-
+GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+GNOME_SHELL_SESSION_MODE=ubuntu
+SSH_AUTH_SOCK=/run/user/1000/keyring/ssh
+MEMORY_PRESSURE_WRITE=c29tZSAyMDAwMDAgMjAwMDAwMAA=
+XMODIFIERS=@im=ibus
+DESKTOP_SESSION=ubuntu
+GTK_MODULES=gail:atk-bridge
+DBUS_STARTER_BUS_TYPE=session
+PWD=/home/nikita/lb2/task2_3
+LOGNAME=nikita
+XDG_SESSION_DESKTOP=ubuntu
+XDG_SESSION_TYPE=wayland
+SYSTEMD_EXEC_PID=2498
+XAUTHORITY=/run/user/1000/.mutter-Xwaylandauth.YEXD42
+HOME=/home/nikita
+USERNAME=nikita
+IM_CONFIG_PHASE=1
+LANG=ru_RU.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:
+XDG_CURRENT_DESKTOP=ubuntu:GNOME
+MEMORY_PRESSURE_WATCH=/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome\x2dsession\x2dmanager.slice/gnome-session-manager@ubuntu.service/memory.pressure
+VTE_VERSION=7600
+WAYLAND_DISPLAY=wayland-0
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/03c19b19_7f7e_4156_a788_ce7a0c989c63
+GNOME_SETUP_DISPLAY=:1
+LESSCLOSE=/usr/bin/lesspipe %s %s
+XDG_SESSION_CLASS=user
+TERM=xterm-256color
+LESSOPEN=| /usr/bin/lesspipe %s
+USER=nikita
+GNOME_TERMINAL_SERVICE=:1.202
+DISPLAY=:0
+SHLVL=1
+GSM_SKIP_SSH_AGENT_WORKAROUND=true
+QT_IM_MODULE=ibus
+DBUS_STARTER_ADDRESS=unix:path=/run/user/1000/bus,guid=d29b8e420e80c5040e8a362267e055be
+XDG_RUNTIME_DIR=/run/user/1000
+DEBUGINFOD_URLS=https://debuginfod.ubuntu.com 
+XDG_DATA_DIRS=/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin
+GDMSESSION=ubuntu
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus,guid=d29b8e420e80c5040e8a362267e055be
+_=./father.out
+OLDPWD=/home/nikita/lb2
+
+3. execle():
+Дочерний процесс (PID: 51125)
+Аргументы:
+argv[0] = ./son.out
+argv[1] = arg1
+argv[2] = arg2
+
+Переменные окружения:
+CUSTOM_ENV=TEST
+LANG=ru_RU.UTF-8
+
+4. execve():
+Дочерний процесс (PID: 51126)
+Аргументы:
+argv[0] = ./son.out
+argv[1] = arg1
+argv[2] = arg2
+
+Переменные окружения:
+CUSTOM_ENV=TEST
+LANG=ru_RU.UTF-8
+
+=== Эксперимент завершен ===
+nikita@nikita:~/lb2/task2_3$ cd ..
+nikita@nikita:~/lb2$ 
+
+
+# 2.4
+nikita@nikita:~/lb2$ mkdir task2_4/
+nikita@nikita:~/lb2$ cd task2_4/
+nikita@nikita:~/lb2/task2_4$ 
