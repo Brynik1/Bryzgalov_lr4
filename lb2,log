@@ -1087,4 +1087,222 @@ nikita@nikita:~/lb2$
 # 2.4
 nikita@nikita:~/lb2$ mkdir task2_4/
 nikita@nikita:~/lb2$ cd task2_4/
-nikita@nikita:~/lb2/task2_4$ 
+nikita@nikita:~/lb2/task2_4$ vim father.c
+nikita@nikita:~/lb2/task2_4$ gcc father.c -o father.out
+nikita@nikita:~/lb2/task2_4$ ./father.out 
+Демонстрация трех ситуаций с процессами:
+
+=== Ситуация а: родитель ожидает завершения дочернего процесса ===
+Родительский процесс (PID: 54604) создал дочерний (PID: 54606)
+
+Состояние до вызова wait():
+Дочерний процесс (PID: 54606, PPID: 54604) запущен
+  54604   48110 S+   ./father.out
+  54606   54604 S+   ./father.out
+  54607   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_'
+  54609   54607 S+   grep -E father|case_
+Дочерний процесс (PID: 54606) завершается
+
+Состояние после вызова wait():
+  54604   48110 S+   ./father.out
+  54613   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_'
+  54615   54613 S+   grep -E father|case_
+Родительский процесс (PID: 54604) завершил ожидание
+
+=== Ситуация б: родитель завершается раньше дочернего ===
+Родительский процесс (PID: 54619) создал дочерний (PID: 54620)
+
+Состояние перед завершением родителя:
+Дочерний процесс (PID: 54620, PPID: 54619) запущен
+Дочерний процесс спит 5 секунд...
+  54604   48110 S+   ./father.out
+  54619   54604 S+   ./father.out
+  54620   54619 S+   ./father.out
+  54621   54619 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_'
+  54623   54621 S+   grep -E father|case_
+Родительский процесс (PID: 54619) завершается
+
+=== Ситуация в: появление зомби-процесса ===
+Родительский процесс (PID: 54604) создал дочерний (PID: 54627)
+
+Дочерний процесс работает:
+Дочерний процесс (PID: 54627, PPID: 54604) запущен
+  54604   48110 S+   ./father.out
+  54620    2296 S+   ./father.out
+  54627   54604 S+   ./father.out
+  54628   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_'
+  54630   54628 S+   grep -E father|case_
+Дочерний процесс (PID: 54627) завершен
+
+Дочерний процесс завершен, но родитель не вызвал wait() (состояние Z):
+  54604   48110 S+   ./father.out
+  54620    2296 S+   ./father.out
+  54627   54604 Z+   [father.out] <defunct>
+  54634   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_'
+  54636   54634 S+   grep -E father|case_
+Дочерний процесс (PID: 54620) завершен (новый PPID: 2296 - обычно это init/systemd)
+
+После вызова wait() (зомби должен исчезнуть):
+  54604   48110 S+   ./father.out
+  54640   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_'
+  54642   54640 S+   grep -E father|case_
+
+Все ситуации продемонстрированы. Проверьте файл process_states.txt для подробной информации.
+nikita@nikita:~/lb2/task2_4$ cat process_states.txt 
+
+  54604   48110 S+   ./father.out
+  54606   54604 S+   ./father.out
+  54610   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_' >> process_states.txt
+  54612   54610 S+   grep -E father|case_
+  54604   48110 S+   ./father.out
+  54616   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_' >> process_states.txt
+  54618   54616 S+   grep -E father|case_
+  54604   48110 S+   ./father.out
+  54619   54604 S+   ./father.out
+  54620   54619 S+   ./father.out
+  54624   54619 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_' >> process_states.txt
+  54626   54624 S+   grep -E father|case_
+  54604   48110 S+   ./father.out
+  54620    2296 S+   ./father.out
+  54627   54604 S+   ./father.out
+  54631   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_' >> process_states.txt
+  54633   54631 S+   grep -E father|case_
+  54604   48110 S+   ./father.out
+  54620    2296 S+   ./father.out
+  54627   54604 Z+   [father.out] <defunct>
+  54637   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_' >> process_states.txt
+  54639   54637 S+   grep -E father|case_
+  54604   48110 S+   ./father.out
+  54643   54604 S+   sh -c -- ps -eo pid,ppid,stat,cmd | grep -E 'father|case_' >> process_states.txt
+  54645   54643 S+   grep -E father|case_
+
+nikita@nikita:~/lb2/task2_4$ cd ..
+
+
+# 3. Управление процессами посредством сигналов (Linux)
+# 3.1
+nikita@nikita:~/lb2$ kill -l
+ 1) SIGHUP	 2) SIGINT	 3) SIGQUIT	 4) SIGILL	 5) SIGTRAP
+ 6) SIGABRT	 7) SIGBUS	 8) SIGFPE	 9) SIGKILL	10) SIGUSR1
+11) SIGSEGV	12) SIGUSR2	13) SIGPIPE	14) SIGALRM	15) SIGTERM
+16) SIGSTKFLT	17) SIGCHLD	18) SIGCONT	19) SIGSTOP	20) SIGTSTP
+21) SIGTTIN	22) SIGTTOU	23) SIGURG	24) SIGXCPU	25) SIGXFSZ
+26) SIGVTALRM	27) SIGPROF	28) SIGWINCH	29) SIGIO	30) SIGPWR
+31) SIGSYS	34) SIGRTMIN	35) SIGRTMIN+1	36) SIGRTMIN+2	37) SIGRTMIN+3
+38) SIGRTMIN+4	39) SIGRTMIN+5	40) SIGRTMIN+6	41) SIGRTMIN+7	42) SIGRTMIN+8
+43) SIGRTMIN+9	44) SIGRTMIN+10	45) SIGRTMIN+11	46) SIGRTMIN+12	47) SIGRTMIN+13
+48) SIGRTMIN+14	49) SIGRTMIN+15	50) SIGRTMAX-14	51) SIGRTMAX-13	52) SIGRTMAX-12
+53) SIGRTMAX-11	54) SIGRTMAX-10	55) SIGRTMAX-9	56) SIGRTMAX-8	57) SIGRTMAX-7
+58) SIGRTMAX-6	59) SIGRTMAX-5	60) SIGRTMAX-4	61) SIGRTMAX-3	62) SIGRTMAX-2
+63) SIGRTMAX-1	64) SIGRTMAX	
+nikita@nikita:~/lb2$ mkdir task3_1
+nikita@nikita:~/lb2$ cd task3_1/
+nikita@nikita:~/lb2/task3_1$ vim son1.c
+nikita@nikita:~/lb2/task3_1$ vim son2.c
+nikita@nikita:~/lb2/task3_1$ vim son3.c
+nikita@nikita:~/lb2/task3_1$ vim father.c
+nikita@nikita:~/lb2/task3_1$ gcc father.c -o father
+nikita@nikita:~/lb2/task3_1$ gcc son1.c -o son1
+nikita@nikita:~/lb2/task3_1$ gcc son2.c -o son2
+nikita@nikita:~/lb2/task3_1$ gcc son3.c -o son3
+nikita@nikita:~/lb2/task3_1$ ./father 
+=== Управление процессами с помощью сигналов ===
+son1 (PID 54773): запущен, реакция на SIGUSR1 по умолчанию (завершение)
+son3 (PID 54775): запущен, перехватывает и обрабатывает SIGUSR1
+son2 (PID 54774): запущен, игнорирует SIGUSR1
+
+Состояние после создания процессов:
+  54771   48110 S+   ./father
+  54773   54771 S+   son1
+  54774   54771 S+   son2
+  54775   54771 S+   son3
+  54776   54771 S+   sh -c -- ps -o pid,ppid,stat,cmd | grep -E 'father|son[123]'
+  54778   54776 S+   grep -E father|son[123]
+
+Отправляем SIGUSR1 дочерним процессам:
+son1 (PID 54773) - обработка по умолчанию (завершение)
+son2 (PID 54774) - игнорирование сигнала
+son3 (PID 54775) - пользовательская обработка
+son3 (PID 54775): получен SIGUSR1, пользовательская обработка
+
+Состояние после отправки сигналов:
+  54771   48110 S+   ./father
+  54773   54771 Z+   [son1] <defunct>
+  54774   54771 S+   son2
+  54775   54771 S+   son3
+  54782   54771 S+   sh -c -- ps -o pid,ppid,stat,cmd | grep -E 'father|son[123]'
+  54784   54782 S+   grep -E father|son[123]
+
+Финальное состояние:
+  54771   48110 S+   ./father
+  54788   54771 S+   sh -c -- ps -o pid,ppid,stat,cmd | grep -E 'father|son[123]'
+  54790   54788 S+   grep -E father|son[123]
+
+Программа завершена. Проверьте файл process_states.txt
+nikita@nikita:~/lb2/task3_1$ cat process_states.txt 
+
+  54771   48110 S+   ./father
+  54773   54771 S+   son1
+  54774   54771 S+   son2
+  54775   54771 S+   son3
+  54779   54771 S+   sh -c -- ps -o pid,ppid,stat,cmd | grep -E 'father|son[123]' >> process_states.txt
+  54781   54779 S+   grep -E father|son[123]
+  54771   48110 S+   ./father
+  54773   54771 Z+   [son1] <defunct>
+  54774   54771 S+   son2
+  54775   54771 S+   son3
+  54785   54771 S+   sh -c -- ps -o pid,ppid,stat,cmd | grep -E 'father|son[123]' >> process_states.txt
+  54787   54785 S+   grep -E father|son[123]
+  54771   48110 S+   ./father
+  54791   54771 S+   sh -c -- ps -o pid,ppid,stat,cmd | grep -E 'father|son[123]' >> process_states.txt
+  54793   54791 S+   grep -E father|son[123]
+nikita@nikita:~/lb2/task3_1$ cd ..
+
+
+# 3.2
+# Программа ждет завершения процесса 2, затеи
+nikita@nikita:~/lb2$ mkdir task3_2
+nikita@nikita:~/lb2$ cd task3_2/
+nikita@nikita:~/lb2/task3_2$ vim father.c
+nikita@nikita:~/lb2/task3_2$ gcc father.c -o father
+nikita@nikita:~/lb2/task3_2$ ./father 
+Дочерний процесс 1 (PID 54831) запущен
+
+Дочерний процесс 2 (PID 54832) запущен
+Родительский процесс (PID 54830) ожидает завершения:
+1. Ожидаем завершения процесса son2 (PID 54832)...
+Дочерний процесс 3 (PID 54833) запущен
+Дочерний процесс 1 (PID 54831) завершается
+Дочерний процесс 2 (PID 54832) завершается
+son2 завершился с кодом 20
+
+2. Проверяем завершение son1 (PID 54831) без блокировки...
+son1 уже завершился с кодом 10
+
+3. Ожидаем завершения всех оставшихся процессов...
+Дочерний процесс 3 (PID 54833) завершается
+Завершился процесс с кодом 30
+
+Все дочерние процессы завершены
+
+
+# 4. Многонитевое функционирование
+# 4.1
+nikita@nikita:~/lb2$ mkdir task4_1
+nikita@nikita:~/lb2$ cd task4_1/
+nikita@nikita:~/lb2/task4_1$ vim task4_1.c
+nikita@nikita:~/lb2/task4_1$ gcc task4_1.c -o task4_1
+nikita@nikita:~/lb2/task4_1$ ./task4_1 
+Главный поток: Идентификатор процесса=55026, Идентификатор потока=55026
+
+Создание потоков с помощью pthread_create()
+PThread 1: Идентификатор процесса=55026, Идентификатор потока=55027
+PThread 2: Идентификатор процесса=55026, Идентификатор потока=55028
+
+Создание потоков с помощью clone()
+Поток clone 3: Идентификатор процесса=55026, Идентификатор потока=55029
+Поток clone 4: Идентификатор процесса=55026, Идентификатор потока=55030
+
+Все потоки завершили работу
+nikita@nikita:~/lb2/task4_1$ cd ..
+nikita@nikita:~/lb2$ 
