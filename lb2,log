@@ -1293,16 +1293,76 @@ nikita@nikita:~/lb2$ cd task4_1/
 nikita@nikita:~/lb2/task4_1$ vim task4_1.c
 nikita@nikita:~/lb2/task4_1$ gcc task4_1.c -o task4_1
 nikita@nikita:~/lb2/task4_1$ ./task4_1 
-Главный поток: Идентификатор процесса=55026, Идентификатор потока=55026
+Основной процесс: PID = 57327
 
-Создание потоков с помощью pthread_create()
-PThread 1: Идентификатор процесса=55026, Идентификатор потока=55027
-PThread 2: Идентификатор процесса=55026, Идентификатор потока=55028
+Создаём pthread-нити...
+Pthread-нить 1: PID = 57327, TID = 57328
+Pthread-нить 1: шаг 1
 
-Создание потоков с помощью clone()
-Поток clone 3: Идентификатор процесса=55026, Идентификатор потока=55029
-Поток clone 4: Идентификатор процесса=55026, Идентификатор потока=55030
+Создаём clone-нить...
+Pthread-нить 2: PID = 57327, TID = 57329
+Pthread-нить 2: шаг 1
+Clone-нить 3: PID = 57330, TID = 57330
+Clone-нить 3: шаг 1
+Pthread-нить 1: шаг 2
+Pthread-нить 2: шаг 2
+Clone-нить 3: шаг 2
+Pthread-нить 1: шаг 3
+Pthread-нить 2: шаг 3
+Clone-нить 3: шаг 3
 
-Все потоки завершили работу
+Все нити завершены. Основной процесс завершается.
+nikita@nikita:~/lb2/task4_1$ 
+
+# 4.2
+# Параллельно с запуском программы из предыдущего пункта в другом терминале была написана команда для фактического наблюдения созданных нитей
+nikita@nikita:~/lb2/task4_1$ ps -eLf | grep -E 'task4_1|PID'
+UID          PID    PPID     LWP  C NLWP STIME TTY          TIME CMD
+nikita     57327   48110   57327  0    3 01:06 pts/0    00:00:00 ./task4_1
+nikita     57327   48110   57328  0    3 01:06 pts/0    00:00:00 ./task4_1
+nikita     57327   48110   57329  0    3 01:06 pts/0    00:00:00 ./task4_1
+nikita     57330   57327   57330  0    1 01:06 pts/0    00:00:00 ./task4_1
+nikita     57332   56908   57332  0    1 01:06 pts/1    00:00:00 grep --color=auto -E task4_1|PID
+
+# Мы видим, что во 2й и 3й строке отображаются созданные программой Pthread-нить (они имеют общий с программой PID, но собственные TID (LWP))
+# В 4й строке отображается нить, созданная через clone, она имеет свой PID, который совпадает с TID. Родителем этой нити является процесс изначальной программы
+
+
+# 4.3
 nikita@nikita:~/lb2/task4_1$ cd ..
-nikita@nikita:~/lb2$ 
+nikita@nikita:~/lb2$ mkdir task4_3
+nikita@nikita:~/lb2$ cd task4_3
+nikita@nikita:~/lb2/task4_3$ vim shared_var.c
+
+# Работа с глобальными переменными
+nikita@nikita:~/lb2/task4_3$ gcc shared_var.c -o shared_var
+nikita@nikita:~/lb2/task4_3$ ./shared_var 
+Поток 126540910163648: shared_var = 1
+Поток 126540901770944: shared_var = 2
+Итог: shared_var = 2
+
+# Работа с переменными окружения
+nikita@nikita:~/lb2/task4_3$ vim env.c 
+nikita@nikita:~/lb2/task4_3$ gcc env.c -o env
+nikita@nikita:~/lb2/task4_3$ ./env 
+Основной поток: USER=nikita
+Поток 136997049988800: USER=nikita
+Поток 136997049988800 изменил переменную окружения: USER=TEST_USER
+Основной поток после изменения: USER=TEST_USER
+
+# 4.4
+nikita@nikita:~/lb2$ mkdir task4_4
+nikita@nikita:~/lb2$ cd task4_4
+nikita@nikita:~/lb2/task4_4$ vim threads.c
+nikita@nikita:~/lb2/task4_4$ gcc threads.c -o threads
+nikita@nikita:~/lb2/task4_4$ ./threads                       # затем (вдругом окне терминала):  nikita@nikita:~/lb2/task4_4$ kill -9 57547
+Основной PID = 57546
+Поток 131481219364544 начал работу (TID=57547)
+Поток 131481210971840 начал работу (TID=57548)
+Убито
+# Попытка завершить один из потоков через команду kill -9 <TID> привета к тому, что вся программа была остановлена
+
+
+
+# 5. Планирование
+
