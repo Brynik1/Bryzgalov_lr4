@@ -1,3 +1,8 @@
+Брызгалов Никита группа 3383
+
+# II. Основы работы c командным интерфейсом.
+
+
 # 1. Получение полезных сведений об ОС и текущем сеансе
 
 # В своем выводе date отображает текущую дату и время
@@ -5140,3 +5145,399 @@ nikita@nikita:~/lb0$ rm test_dir/prog.c
 nikita@nikita:~/lb0$ rmdir test_dir
 nikita@nikita:~/lb0$ ls
 file.txt  prog.c  super_file.txt
+
+
+# 6. Процессы ОС Linux
+
+# Вывод процессов текущего терминала
+nikita@nikita:~/lb0$ ps
+    PID TTY          TIME CMD
+  68547 pts/2    00:00:01 bash
+  69349 pts/2    00:00:00 ps
+
+# Комментарий:
+PID — уникальный идентификатор процесса.
+TTY — терминал, с которым связан процесс
+TIME — общее время использования CPU
+CMD — имя команды/процесса
+
+
+# Вывод всех процессов системы
+nikita@nikita:~/lb0$ ps -A
+    PID TTY          TIME CMD
+      1 ?        00:01:16 systemd
+      2 ?        00:00:01 kthreadd
+      3 ?        00:00:00 pool_workqueue_release
+      4 ?        00:00:00 kworker/R-rcu_gp
+      5 ?        00:00:00 kworker/R-sync_wq
+      6 ?        00:00:00 kworker/R-slub_flushwq
+      7 ?        00:00:00 kworker/R-netns
+      9 ?        00:00:00 kworker/0:0H-events_highpri
+     11 ?        00:00:00 kworker/u512:0-ipv6_addrconf
+     12 ?        00:00:00 kworker/R-mm_percpu_wq
+     13 ?        00:00:00 rcu_tasks_kthread
+     14 ?        00:00:00 rcu_tasks_rude_kthread
+     15 ?        00:00:00 rcu_tasks_trace_kthread
+     16 ?        00:00:16 ksoftirqd/0
+     17 ?        00:01:42 rcu_preempt
+     18 ?        00:00:00 rcu_exp_par_gp_kthread_worker/1
+     19 ?        00:00:00 rcu_exp_gp_kthread_worker
+     20 ?        00:00:14 migration/0
+     21 ?        00:00:00 idle_inject/0
+     22 ?        00:00:00 cpuhp/0
+     23 ?        00:00:00 cpuhp/1
+     24 ?        00:00:00 idle_inject/1
+     25 ?        00:00:15 migration/1
+     26 ?        00:00:15 ksoftirqd/1
+     29 ?        00:00:00 cpuhp/2
+     30 ?        00:00:00 idle_inject/2
+     31 ?        00:00:14 migration/2
+     32 ?        00:00:15 ksoftirqd/2
+     34 ?        00:00:04 kworker/2:0H-kblockd
+     35 ?        00:00:00 cpuhp/3
+     36 ?        00:00:00 idle_inject/3
+     37 ?        00:00:13 migration/3
+     38 ?        00:00:23 ksoftirqd/3
+     45 ?        00:00:00 kdevtmpfs
+     46 ?        00:00:00 kworker/R-inet_frag_wq
+     48 ?        00:00:00 kauditd
+     49 ?        00:00:00 khungtaskd
+     50 ?        00:00:00 oom_reaper
+     52 ?        00:00:00 kworker/R-writeback
+     53 ?        00:01:11 kcompactd0
+     54 ?        00:00:00 ksmd
+     55 ?        00:00:00 khugepaged
+     56 ?        00:00:00 kworker/R-kintegrityd
+     57 ?        00:00:00 kworker/R-kblockd
+     58 ?        00:00:00 kworker/R-blkcg_punt_bio
+     59 ?        00:00:00 irq/9-acpi
+     61 ?        00:00:00 kworker/R-tpm_dev_wq
+     62 ?        00:00:00 kworker/R-ata_sff
+     63 ?        00:00:00 kworker/R-md
+     64 ?        00:00:00 kworker/R-md_bitmap
+     65 ?        00:00:00 kworker/R-edac-poller
+     66 ?        00:00:00 kworker/R-devfreq_wq
+     67 ?        00:00:00 watchdogd
+     71 ?        00:00:05 kswapd0
+     72 ?        00:00:00 ecryptfs-kthread
+     73 ?        00:00:00 kworker/R-kthrotld
+     74 ?        00:00:00 irq/24-pciehp
+     75 ?        00:00:00 irq/25-pciehp
+     76 ?        00:00:00 irq/26-pciehp
+     77 ?        00:00:00 irq/27-pciehp
+     78 ?        00:00:00 irq/28-pciehp
+     79 ?        00:00:00 irq/29-pciehp
+     80 ?        00:00:00 irq/30-pciehp
+     81 ?        00:00:00 irq/31-pciehp
+     82 ?        00:00:00 irq/32-pciehp
+     83 ?        00:00:00 irq/33-pciehp
+     84 ?        00:00:00 irq/34-pciehp
+     85 ?        00:00:00 irq/35-pciehp
+     86 ?        00:00:00 irq/36-pciehp
+     87 ?        00:00:00 irq/37-pciehp
+     88 ?        00:00:00 irq/38-pciehp
+     89 ?        00:00:00 irq/39-pciehp
+     90 ?        00:00:00 irq/40-pciehp
+     91 ?        00:00:00 irq/41-pciehp
+     92 ?        00:00:00 irq/42-pciehp
+     93 ?        00:00:00 irq/43-pciehp
+     94 ?        00:00:00 irq/44-pciehp
+     95 ?        00:00:00 irq/45-pciehp
+     96 ?        00:00:00 irq/46-pciehp
+     97 ?        00:00:00 irq/47-pciehp
+     98 ?        00:00:00 irq/48-pciehp
+     99 ?        00:00:00 irq/49-pciehp
+    100 ?        00:00:00 irq/50-pciehp
+    101 ?        00:00:00 irq/51-pciehp
+    102 ?        00:00:00 irq/52-pciehp
+    103 ?        00:00:00 irq/53-pciehp
+    104 ?        00:00:00 irq/54-pciehp
+    105 ?        00:00:00 irq/55-pciehp
+    106 ?        00:00:00 kworker/R-acpi_thermal_pm
+    108 ?        00:00:00 scsi_eh_0
+    109 ?        00:00:00 kworker/R-scsi_tmf_0
+    110 ?        00:00:00 scsi_eh_1
+    111 ?        00:00:00 kworker/R-scsi_tmf_1
+    117 ?        00:00:00 kworker/R-mld
+    118 ?        00:00:00 kworker/2:1H-kblockd
+    119 ?        00:00:00 kworker/R-ipv6_addrconf
+    121 ?        00:00:00 kworker/u512:1-ipv6_addrconf
+    129 ?        00:00:00 kworker/R-kstrp
+    131 ?        00:00:00 kworker/u517:0-hci0
+    148 ?        00:00:00 kworker/R-charger_manager
+    204 ?        00:00:00 kworker/R-mpt_poll_0
+    205 ?        00:00:00 kworker/R-mpt/0
+    216 ?        00:00:00 scsi_eh_2
+    218 ?        00:00:00 kworker/R-scsi_tmf_2
+    219 ?        00:00:00 scsi_eh_3
+    220 ?        00:00:00 kworker/R-scsi_tmf_3
+    221 ?        00:00:00 scsi_eh_4
+    222 ?        00:00:00 kworker/R-scsi_tmf_4
+    223 ?        00:00:00 scsi_eh_5
+    224 ?        00:00:00 kworker/R-scsi_tmf_5
+    225 ?        00:00:00 scsi_eh_6
+    226 ?        00:00:00 kworker/R-scsi_tmf_6
+    227 ?        00:00:00 scsi_eh_7
+    228 ?        00:00:00 kworker/R-scsi_tmf_7
+    229 ?        00:00:00 scsi_eh_8
+    230 ?        00:00:00 kworker/R-scsi_tmf_8
+    231 ?        00:00:00 scsi_eh_9
+    232 ?        00:00:00 kworker/R-scsi_tmf_9
+    233 ?        00:00:00 scsi_eh_10
+    234 ?        00:00:00 kworker/R-scsi_tmf_10
+    235 ?        00:00:00 scsi_eh_11
+    236 ?        00:00:00 kworker/R-scsi_tmf_11
+    237 ?        00:00:00 scsi_eh_12
+    238 ?        00:00:00 kworker/R-scsi_tmf_12
+    239 ?        00:00:00 scsi_eh_13
+    240 ?        00:00:00 kworker/R-scsi_tmf_13
+    241 ?        00:00:00 scsi_eh_14
+    242 ?        00:00:00 kworker/R-scsi_tmf_14
+    243 ?        00:00:00 scsi_eh_15
+    244 ?        00:00:00 kworker/R-scsi_tmf_15
+    245 ?        00:00:00 scsi_eh_16
+    246 ?        00:00:00 kworker/R-scsi_tmf_16
+    247 ?        00:00:00 scsi_eh_17
+    248 ?        00:00:00 kworker/R-scsi_tmf_17
+    249 ?        00:00:00 scsi_eh_18
+    250 ?        00:00:00 kworker/R-scsi_tmf_18
+    251 ?        00:00:00 scsi_eh_19
+    252 ?        00:00:00 kworker/R-scsi_tmf_19
+    253 ?        00:00:00 scsi_eh_20
+    254 ?        00:00:00 kworker/R-scsi_tmf_20
+    255 ?        00:00:00 scsi_eh_21
+    256 ?        00:00:00 kworker/R-scsi_tmf_21
+    257 ?        00:00:00 scsi_eh_22
+    258 ?        00:00:00 kworker/R-scsi_tmf_22
+    259 ?        00:00:00 scsi_eh_23
+    260 ?        00:00:00 kworker/R-scsi_tmf_23
+    261 ?        00:00:00 scsi_eh_24
+    262 ?        00:00:00 kworker/R-scsi_tmf_24
+    263 ?        00:00:00 scsi_eh_25
+    264 ?        00:00:00 kworker/R-scsi_tmf_25
+    265 ?        00:00:00 scsi_eh_26
+    266 ?        00:00:00 kworker/R-scsi_tmf_26
+    267 ?        00:00:00 scsi_eh_27
+    268 ?        00:00:00 kworker/R-scsi_tmf_27
+    269 ?        00:00:00 scsi_eh_28
+    270 ?        00:00:00 kworker/R-scsi_tmf_28
+    271 ?        00:00:00 scsi_eh_29
+    272 ?        00:00:00 kworker/R-scsi_tmf_29
+    273 ?        00:00:00 scsi_eh_30
+    274 ?        00:00:00 kworker/R-scsi_tmf_30
+    275 ?        00:00:00 scsi_eh_31
+    276 ?        00:00:00 kworker/R-scsi_tmf_31
+    277 ?        00:00:00 scsi_eh_32
+    278 ?        00:00:00 kworker/R-scsi_tmf_32
+    355 ?        00:00:21 jbd2/sda2-8
+    356 ?        00:00:00 kworker/R-ext4-rsv-conversion
+    404 ?        00:00:26 systemd-journal
+    441 ?        00:00:00 vmware-vmblock-
+    452 ?        00:00:43 irq/16-vmwgfx
+    454 ?        00:00:00 kworker/R-ttm
+    458 ?        00:00:09 systemd-udevd
+    501 ?        00:00:00 psimon
+    727 ?        00:05:31 systemd-oomd
+    729 ?        00:00:09 systemd-resolve
+    732 ?        00:00:03 systemd-timesyn
+    777 ?        00:00:00 VGAuthService
+    787 ?        00:21:54 vmtoolsd
+    798 ?        00:00:07 irq/57-vmw_vmci
+    799 ?        00:00:00 irq/58-vmw_vmci
+    801 ?        00:00:05 irq/59-vmw_vmci
+   1027 ?        00:00:09 avahi-daemon
+   1031 ?        00:00:22 dbus-daemon
+   1043 ?        00:00:00 gnome-remote-de
+   1062 ?        00:00:23 polkitd
+   1067 ?        00:00:00 power-profiles-
+   1097 ?        00:00:23 accounts-daemon
+   1105 ?        00:00:02 cron
+   1118 ?        00:00:01 switcheroo-cont
+   1144 ?        00:00:06 systemd-logind
+   1148 ?        00:00:18 udisksd
+   1174 ?        00:00:04 rsyslogd
+   1204 ?        00:00:00 avahi-daemon
+   1212 ?        00:00:49 NetworkManager
+   1221 ?        00:00:06 wpa_supplicant
+   1272 ?        00:00:00 ModemManager
+   1456 ?        00:00:00 kworker/R-cryptd
+   1584 ?        00:00:00 bluetoothd
+   1639 ?        00:00:00 unattended-upgr
+   1710 ?        00:00:00 gdm3
+   1786 ?        00:00:14 rtkit-daemon
+   1862 ?        00:00:00 kerneloops
+   1867 ?        00:00:00 kerneloops
+   1921 ?        00:00:01 colord
+   1969 ?        00:00:00 upowerd
+   2284 ?        00:00:00 gdm-session-wor
+   2296 ?        00:00:06 systemd
+   2301 ?        00:00:00 (sd-pam)
+   2311 ?        00:07:15 pipewire
+   2317 ?        00:00:00 pipewire
+   2322 ?        00:00:38 wireplumber
+   2324 ?        00:00:57 pipewire-pulse
+   2327 ?        00:00:00 gnome-keyring-d
+   2332 ?        00:00:10 dbus-daemon
+   2374 ?        00:00:00 xdg-document-po
+   2378 ?        00:00:00 xdg-permission-
+   2385 tty2     00:00:00 gdm-wayland-ses
+   2394 tty2     00:00:00 gnome-session-b
+   2397 ?        00:00:00 fusermount3
+   2472 ?        00:00:00 gcr-ssh-agent
+   2473 ?        00:00:00 gnome-session-c
+   2488 ?        00:00:00 gvfsd
+   2496 ?        00:00:00 gvfsd-fuse
+   2498 ?        00:00:00 gnome-session-b
+   2537 ?        00:43:31 gnome-shell
+   2541 ?        00:00:00 at-spi-bus-laun
+   2554 ?        00:00:00 dbus-daemon
+   2625 ?        00:00:00 at-spi2-registr
+   2637 ?        00:00:00 gnome-shell-cal
+   2660 ?        00:00:01 evolution-sourc
+   2671 ?        00:00:01 gjs
+   2681 ?        00:05:00 ibus-daemon
+   2684 ?        00:00:00 gsd-a11y-settin
+   2685 ?        00:00:03 gsd-color
+   2698 ?        00:00:00 gsd-datetime
+   2699 ?        00:00:05 gsd-housekeepin
+   2703 ?        00:00:00 gsd-keyboard
+   2704 ?        00:00:13 gsd-media-keys
+   2706 ?        00:00:03 gsd-power
+   2707 ?        00:00:00 gsd-print-notif
+   2709 ?        00:00:00 gsd-rfkill
+   2723 ?        00:00:00 gsd-screensaver
+   2725 ?        00:00:02 gsd-sharing
+   2728 ?        00:00:00 gsd-smartcard
+   2734 ?        00:00:00 gsd-sound
+   2736 ?        00:00:00 gsd-wacom
+   2743 ?        00:00:03 gvfs-udisks2-vo
+   2744 ?        00:00:03 evolution-alarm
+   2796 ?        00:00:00 ibus-dconf
+   2800 ?        00:00:54 ibus-extension-
+   2804 ?        00:21:58 vmtoolsd
+   2810 ?        00:00:00 gsd-disk-utilit
+   2820 ?        00:00:00 ibus-portal
+   2869 ?        00:00:00 gsd-printer
+   2940 ?        00:00:00 gvfs-goa-volume
+   2964 ?        00:00:01 goa-daemon
+   2978 ?        00:00:02 goa-identity-se
+   2989 ?        00:00:00 gvfs-mtp-volume
+   2997 ?        00:00:03 evolution-calen
+   2998 ?        00:01:12 gvfs-afc-volume
+   3007 ?        00:00:00 gvfs-gphoto2-vo
+   3014 ?        00:00:24 Xwayland
+   3024 ?        00:00:02 evolution-addre
+   3060 ?        00:01:42 ibus-engine-sim
+   3061 ?        00:00:00 snapd-desktop-i
+   3092 ?        00:00:00 dconf-service
+   3151 ?        00:00:04 snapd-desktop-i
+   3167 ?        00:00:00 gvfsd-metadata
+   3168 ?        00:00:01 gvfsd-trash
+   3217 ?        00:00:11 tracker-miner-f
+   3225 ?        00:00:00 gjs
+   3244 ?        00:00:28 xdg-desktop-por
+   3273 ?        00:00:04 xdg-desktop-por
+   3307 ?        00:01:06 gjs
+   3331 ?        00:00:02 gsd-xsettings
+   3364 ?        00:00:01 xdg-desktop-por
+   3372 ?        00:00:01 ibus-x11
+   3379 ?        00:00:06 mutter-x11-fram
+   3481 ?        00:00:00 gvfsd-recent
+   3537 ?        00:00:30 update-notifier
+   4111 ?        00:00:02 kworker/1:2H-kblockd
+  11157 ?        00:01:04 fwupd
+  24356 ?        00:00:11 snap
+  36866 ?        00:00:01 kworker/3:2H-kblockd
+  48103 ?        00:06:12 gnome-terminal-
+  48110 pts/0    00:00:13 bash
+  52450 ?        00:00:01 kworker/3:0H-kblockd
+  52887 ?        00:00:01 kworker/0:2H-kblockd
+  57423 pts/0    00:00:00 vim
+  57821 ?        00:00:00 kworker/u517:2-hci0
+  59548 pts/1    00:00:00 bash
+  63612 ?        00:00:00 kworker/1:1H-kblockd
+  64054 ?        00:00:11 snapd
+  64661 ?        00:00:00 psimon
+  65365 ?        00:00:00 kworker/u519:0-ttm
+  65369 ?        00:00:14 nautilus
+  68535 ?        00:00:00 kworker/u521:4-ttm
+  68547 pts/2    00:00:01 bash
+  68578 ?        00:00:00 kworker/u519:3-ttm
+  68816 ?        00:00:00 kworker/u518:0-ttm
+  68817 ?        00:00:00 kworker/u518:2-ttm
+  68818 ?        00:00:00 kworker/u521:0-ttm
+  68936 ?        00:00:00 kworker/u516:1-events_freezable_pwr_efficient
+  68949 ?        00:00:00 kworker/u516:2-events_unbound
+  68997 ?        00:00:00 kworker/u520:3
+  68998 ?        00:00:00 kworker/u520:4-ttm
+  69026 ?        00:00:00 kworker/u515:2-events_freezable_pwr_efficient
+  69027 ?        00:00:00 kworker/u515:4-events_freezable_pwr_efficient
+  69037 ?        00:00:11 kworker/1:2-events
+  69111 ?        00:00:07 kworker/2:0-events
+  69112 ?        00:00:07 kworker/0:1-events
+  69114 ?        00:00:00 kworker/u513:2-events_power_efficient
+  69128 ?        00:00:00 kworker/u514:1-events_freezable_pwr_efficient
+  69132 ?        00:00:00 kworker/0:2-events
+  69135 ?        00:00:04 kworker/3:1-events
+  69169 ?        00:00:00 cupsd
+  69171 ?        00:00:00 cups-browsed
+  69178 ?        00:00:00 kworker/u513:3-events_power_efficient
+  69249 ?        00:00:00 kworker/u514:2-events_unbound
+  69256 ?        00:00:03 kworker/0:0-events
+  69266 ?        00:00:02 kworker/3:2-events
+  69271 ?        00:00:00 kworker/u513:0-flush-8:0
+  69284 ?        00:00:02 kworker/1:3-events
+  69285 ?        00:00:00 kworker/u516:3-events_unbound
+  69286 ?        00:00:00 kworker/u514:0-events_power_efficient
+  69289 ?        00:00:02 kworker/2:2-events_freezable
+  69341 ?        00:00:00 kworker/2:1-mm_percpu_wq
+  69347 ?        00:00:00 kworker/u515:0-events_unbound
+  69348 ?        00:00:00 kworker/3:0-events
+  69350 ?        00:00:00 kworker/1:0-events
+  69351 pts/2    00:00:00 ps
+
+
+
+III. Изучение цикла подготовки и исполнения программ в ОС Linux
+
+# Создаем файл prog.c с содержимым
+nikita@nikita:~/lb0$ vim prog.c 
+
+# Компиляция в объектный файл, имя объектного файла - prog.o
+nikita@nikita:~/lb0$ gcc -c prog.c -o prog.o
+
+# Создание исполняемого файла и проверка работаспособности 
+nikita@nikita:~/lb0$ gcc prog.o -o prog
+nikita@nikita:~/lb0$ ./prog 
+Hello, everybody!
+
+# Перенаправление вывода
+nikita@nikita:~/lb0$ ./prog > res
+nikita@nikita:~/lb0$ cat res
+Hello, everybody!
+
+# Создаем программу и исполняемый файл
+nikita@nikita:~/lb0$ vim my_open.c
+nikita@nikita:~/lb0$ gcc my_open.c -o my_open
+
+nikita@nikita:~/lb0$ touch existing_file.txt
+nikita@nikita:~/lb0$ ./my_open existing_file.txt 
+./my_open: файл existing_file.txt открыт
+nikita@nikita:~/lb0$ ./my_open none.txt
+./my_open: неудача при попытке открыть файл none.txt
+nikita@nikita:~/lb0$ ./my_open 
+Открываемый файл не указан
+
+
+nikita@nikita:~/lb0$ vim file_name.c 
+nikita@nikita:~/lb0$ gcc file_name.c -o file_name
+
+# Тестируем конвейеры:
+nikita@nikita:~/lb0$ ./file_name existing_file.txt || ./my_open existing_file.txt 
+existing_file.txt
+nikita@nikita:~/lb0$ ./file_name existing_file.txt | ./my_open
+Открываемый файл не указан
+nikita@nikita:~/lb0$ ./file_name existing_file.txt && ./my_open existing_file.txt
+existing_file.txt
+./my_open: файл existing_file.txt открыт
+
